@@ -3,17 +3,34 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Lock, User } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { signIn, isAdmin, user } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Redirect if already logged in as admin
+  if (user && isAdmin) {
+    navigate("/quan-tri", { replace: true });
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.info("Chức năng đăng nhập sẽ được kích hoạt khi kết nối Lovable Cloud.");
+    setLoading(true);
+    try {
+      await signIn(email, password);
+      toast.success("Đăng nhập thành công!");
+      navigate("/quan-tri");
+    } catch (err: any) {
+      toast.error(err.message || "Đăng nhập thất bại");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,7 +61,9 @@ const Login = () => {
                   <Input className="pl-10" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
                 </div>
               </div>
-              <Button type="submit" className="w-full gradient-primary text-primary-foreground border-0 py-5">Đăng nhập</Button>
+              <Button type="submit" className="w-full gradient-primary text-primary-foreground border-0 py-5" disabled={loading}>
+                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+              </Button>
             </form>
           </div>
         </div>
