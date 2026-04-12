@@ -63,7 +63,7 @@ const ProductCategory = () => {
       const { data } = await supabase
         .from("products")
         .select("*")
-        .eq("category", category!)
+        .eq("category", category as "phan-bon" | "chan-nuoi" | "thuy-san")
         .eq("is_active", true)
         .order("created_at");
       return data || [];
