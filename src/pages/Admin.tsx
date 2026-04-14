@@ -256,11 +256,12 @@ const NewsAdmin = () => {
 
 const NewsForm = ({ post, onDone }: { post: NewsPost | null; onDone: () => void }) => {
   const { user } = useAuth();
+  const { data: categories = [] } = useNewsCategories();
   const [form, setForm] = useState({
     title: post?.title || "",
     excerpt: post?.excerpt || "",
     content: post?.content || "",
-    category: post?.category || "Tin tức thị trường",
+    category: post?.category || "",
     is_published: post?.is_published ?? false,
     image_url: post?.image_url || "",
   });
@@ -288,9 +289,9 @@ const NewsForm = ({ post, onDone }: { post: NewsPost | null; onDone: () => void 
       <div>
         <label className="text-sm font-medium mb-1 block">Danh mục</label>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder="Chọn danh mục" /></SelectTrigger>
           <SelectContent>
-            {newsCats.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            {categories.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
