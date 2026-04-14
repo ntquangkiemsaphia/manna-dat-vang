@@ -17,6 +17,9 @@ jobs:
 
       - name: Save image
         run: docker save vite-app:latest -o vite-app.tar
+        
+      - name: Fix permission
+        run: chmod 644 vite-app.tar
 
       - name: Copy image to server
         uses: appleboy/scp-action@v0.1.7
