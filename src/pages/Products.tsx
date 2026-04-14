@@ -6,27 +6,13 @@ import SectionTitle from "@/components/SectionTitle";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import heroProducts from "@/assets/hero-products.jpg";
-import { Leaf, FlaskConical, Fish, ArrowRight, Phone } from "lucide-react";
+import { Leaf, FlaskConical, Fish, ArrowRight, Phone, Package } from "lucide-react";
 
-const categoryMeta: Record<string, { name: string; icon: typeof Leaf; description: string }> = {
-  "phan-bon": {
-    name: "Phân bón sinh học",
-    icon: Leaf,
-    description: "Chế phẩm giải độc đất, phân bón sinh học từ thảo dược thiên nhiên giúp phục hồi đất trồng bị thoái hóa.",
-  },
-  "chan-nuoi": {
-    name: "Chăn nuôi",
-    icon: FlaskConical,
-    description: "Thức ăn bổ sung và chế phẩm sinh học chứa hợp chất kháng sinh thực vật, hỗ trợ tiêu hóa và tăng sức đề kháng.",
-  },
-  "thuy-san": {
-    name: "Thủy sản",
-    icon: Fish,
-    description: "Giải pháp sinh học xử lý nước ao, phân hủy chất hữu cơ, kiểm soát tảo độc.",
-  },
+const iconMap: Record<string, typeof Leaf> = {
+  "phan-bon": Leaf,
+  "chan-nuoi": FlaskConical,
+  "thuy-san": Fish,
 };
-
-const allCategories = Object.entries(categoryMeta).map(([slug, cat]) => ({ slug, ...cat }));
 
 const ProductsOverview = () => (
   <Layout>
