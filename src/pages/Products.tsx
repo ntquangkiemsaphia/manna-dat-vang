@@ -6,56 +6,67 @@ import SectionTitle from "@/components/SectionTitle";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import heroProducts from "@/assets/hero-products.jpg";
-import { Leaf, FlaskConical, Fish, ArrowRight, Phone } from "lucide-react";
+import { Leaf, FlaskConical, Fish, ArrowRight, Phone, Package } from "lucide-react";
 
-const categoryMeta: Record<string, { name: string; icon: typeof Leaf; description: string }> = {
-  "phan-bon": {
-    name: "Phân bón sinh học",
-    icon: Leaf,
-    description: "Chế phẩm giải độc đất, phân bón sinh học từ thảo dược thiên nhiên giúp phục hồi đất trồng bị thoái hóa.",
-  },
-  "chan-nuoi": {
-    name: "Chăn nuôi",
-    icon: FlaskConical,
-    description: "Thức ăn bổ sung và chế phẩm sinh học chứa hợp chất kháng sinh thực vật, hỗ trợ tiêu hóa và tăng sức đề kháng.",
-  },
-  "thuy-san": {
-    name: "Thủy sản",
-    icon: Fish,
-    description: "Giải pháp sinh học xử lý nước ao, phân hủy chất hữu cơ, kiểm soát tảo độc.",
-  },
+const iconMap: Record<string, typeof Leaf> = {
+  "phan-bon": Leaf,
+  "chan-nuoi": FlaskConical,
+  "thuy-san": Fish,
 };
 
-const allCategories = Object.entries(categoryMeta).map(([slug, cat]) => ({ slug, ...cat }));
+const ProductsOverview = () => {
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ["product-categories"],
+    queryFn: async () => {
+      const { data } = await supabase.from("product_categories").select("*").order("created_at");
+      return (data as any[]) || [];
+    },
+  });
 
-const ProductsOverview = () => (
-  <Layout>
-    <HeroBanner image={heroProducts} title="Sản phẩm & Dịch vụ" subtitle="Giải pháp sinh học toàn diện cho nông nghiệp tuần hoàn" compact />
-    <section className="py-20">
-      <div className="container">
-        <SectionTitle label="Danh mục sản phẩm" title="Ba trụ cột nông nghiệp sinh học" description="Chuỗi sản phẩm khép kín từ đất → cây trồng → chăn nuôi – thủy sản → thực phẩm sạch." />
-        <div className="grid md:grid-cols-3 gap-8">
-          {allCategories.map((cat) => (
-            <Link key={cat.slug} to={`/san-pham/${cat.slug}`} className="group bg-card rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
-              <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6">
-                <cat.icon className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <h3 className="text-xl font-serif font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">{cat.name}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">{cat.description}</p>
-              <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                Xem sản phẩm <ArrowRight className="w-4 h-4" />
-              </span>
-            </Link>
-          ))}
+  return (
+    <Layout>
+      <HeroBanner image={heroProducts} title="Sản phẩm & Dịch vụ" subtitle="Giải pháp sinh học toàn diện cho nông nghiệp tuần hoàn" compact />
+      <section className="py-20">
+        <div className="container">
+          <SectionTitle label="Danh mục sản phẩm" title="Các trụ cột nông nghiệp sinh học" description="Chuỗi sản phẩm khép kín từ đất → cây trồng → chăn nuôi – thủy sản → thực phẩm sạch." />
+          {isLoading ? (
+            <div className="text-center text-muted-foreground">Đang tải...</div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {categories.map((cat: any) => {
+                const Icon = iconMap[cat.slug] || Package;
+                return (
+                  <Link key={cat.slug} to={`/san-pham/${cat.slug}`} className="group bg-card rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6">
+                      <Icon className="w-7 h-7 text-primary-foreground" />
+                    </div>
+                    <h3 className="text-xl font-serif font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">{cat.name}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4">{cat.description}</p>
+                    <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Xem sản phẩm <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
-      </div>
-    </section>
-  </Layout>
-);
+      </section>
+    </Layout>
+  );
+};
 
 const ProductCategory = () => {
   const { category } = useParams<{ category: string }>();
-  const meta = categoryMeta[category || ""];
+
+  const { data: catInfo } = useQuery({
+    queryKey: ["product-category-info", category],
+    queryFn: async () => {
+      const { data } = await supabase.from("product_categories").select("*").eq("slug", category!).single();
+      return data as any;
+    },
+    enabled: !!category,
+  });
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["products", category],
@@ -63,7 +74,7 @@ const ProductCategory = () => {
       const { data } = await supabase
         .from("products")
         .select("*")
-        .eq("category", category as "phan-bon" | "chan-nuoi" | "thuy-san")
+        .eq("category", category!)
         .eq("is_active", true)
         .order("created_at");
       return data || [];
@@ -71,16 +82,16 @@ const ProductCategory = () => {
     enabled: !!category,
   });
 
-  if (!meta) return <Layout><div className="container py-40 text-center"><h2 className="text-2xl font-serif">Không tìm thấy danh mục</h2></div></Layout>;
+  if (!isLoading && !catInfo) return <Layout><div className="container py-40 text-center"><h2 className="text-2xl font-serif">Không tìm thấy danh mục</h2></div></Layout>;
 
-  const Icon = meta.icon;
+  const Icon = iconMap[category || ""] || Package;
 
   return (
     <Layout>
-      <HeroBanner image={heroProducts} title={meta.name} subtitle={meta.description} compact />
+      <HeroBanner image={heroProducts} title={catInfo?.name || "Sản phẩm"} subtitle={catInfo?.description || ""} compact />
       <section className="py-20">
         <div className="container">
-          <SectionTitle title={`Sản phẩm ${meta.name}`} description={meta.description} />
+          <SectionTitle title={`Sản phẩm ${catInfo?.name || ""}`} description={catInfo?.description || ""} />
           {isLoading ? (
             <div className="text-center text-muted-foreground">Đang tải...</div>
           ) : (

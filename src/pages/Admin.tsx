@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,16 +13,13 @@ import { Plus, Pencil, Trash2, LogOut } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import CategoriesAdmin from "@/components/admin/CategoriesAdmin";
+import ProductCategoriesAdmin, { useProductCategories } from "@/components/admin/ProductCategoriesAdmin";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
+import ImageUpload from "@/components/admin/ImageUpload";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 type Product = Tables<"products">;
 type NewsPost = Tables<"news_posts">;
-
-const categoryLabels: Record<string, string> = {
-  "phan-bon": "Phân bón sinh học",
-  "chan-nuoi": "Chăn nuôi",
-  "thuy-san": "Thủy sản",
-};
 
 const AdminPage = () => {
   const { isAdmin, loading, signOut, user } = useAuth();
@@ -41,12 +37,14 @@ const AdminPage = () => {
           </div>
 
           <Tabs defaultValue="products">
-            <TabsList className="mb-6">
+            <TabsList className="mb-6 flex-wrap h-auto">
               <TabsTrigger value="products">Sản phẩm</TabsTrigger>
+              <TabsTrigger value="product-categories">DM Sản phẩm</TabsTrigger>
               <TabsTrigger value="news">Bài viết</TabsTrigger>
-              <TabsTrigger value="categories">Danh mục bài viết</TabsTrigger>
+              <TabsTrigger value="categories">DM Bài viết</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
+            <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
             <TabsContent value="news"><NewsAdmin /></TabsContent>
             <TabsContent value="categories"><CategoriesAdmin /></TabsContent>
           </Tabs>
@@ -70,6 +68,8 @@ const ProductsAdmin = () => {
     },
   });
 
+  const { data: productCategories = [] } = useProductCategories();
+
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("products").delete().eq("id", id);
@@ -78,6 +78,11 @@ const ProductsAdmin = () => {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-products"] }); toast.success("Đã xóa sản phẩm"); },
   });
 
+  const getCategoryName = (slug: string) => {
+    const cat = productCategories.find(c => c.slug === slug);
+    return cat?.name || slug;
+  };
+
   return (
     <div>
       <div className="flex justify-end mb-4">
@@ -85,7 +90,7 @@ const ProductsAdmin = () => {
           <DialogTrigger asChild>
             <Button className="gradient-primary text-primary-foreground border-0"><Plus className="w-4 h-4 mr-1" /> Thêm sản phẩm</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editProduct ? "Sửa sản phẩm" : "Thêm sản phẩm mới"}</DialogTitle></DialogHeader>
             <ProductForm product={editProduct} onDone={() => { setDialogOpen(false); setEditProduct(null); qc.invalidateQueries({ queryKey: ["admin-products"] }); }} />
           </DialogContent>
@@ -104,7 +109,7 @@ const ProductsAdmin = () => {
             {products.map((p) => (
               <tr key={p.id} className="border-b border-border last:border-0">
                 <td className="p-3 font-medium">{p.name}</td>
-                <td className="p-3 hidden md:table-cell text-muted-foreground">{categoryLabels[p.category]}</td>
+                <td className="p-3 hidden md:table-cell text-muted-foreground">{getCategoryName(p.category)}</td>
                 <td className="p-3 hidden md:table-cell">
                   <span className={`text-xs px-2 py-1 rounded-full ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     {p.is_active ? "Hoạt động" : "Ẩn"}
@@ -124,11 +129,12 @@ const ProductsAdmin = () => {
 };
 
 const ProductForm = ({ product, onDone }: { product: Product | null; onDone: () => void }) => {
+  const { data: productCategories = [] } = useProductCategories();
   const [form, setForm] = useState({
     name: product?.name || "",
     description: product?.description || "",
     usage_info: product?.usage_info || "",
-    category: product?.category || "phan-bon" as const,
+    category: product?.category || "",
     is_active: product?.is_active ?? true,
     image_url: product?.image_url || "",
   });
@@ -136,10 +142,10 @@ const ProductForm = ({ product, onDone }: { product: Product | null; onDone: () 
   const mutation = useMutation({
     mutationFn: async () => {
       if (product) {
-        const { error } = await supabase.from("products").update(form).eq("id", product.id);
+        const { error } = await supabase.from("products").update(form as any).eq("id", product.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("products").insert(form as TablesInsert<"products">);
+        const { error } = await supabase.from("products").insert(form as any);
         if (error) throw error;
       }
     },
@@ -155,26 +161,24 @@ const ProductForm = ({ product, onDone }: { product: Product | null; onDone: () 
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Danh mục</label>
-        <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as any })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+        <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+          <SelectTrigger><SelectValue placeholder="Chọn danh mục" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="phan-bon">Phân bón sinh học</SelectItem>
-            <SelectItem value="chan-nuoi">Chăn nuôi</SelectItem>
-            <SelectItem value="thuy-san">Thủy sản</SelectItem>
+            {productCategories.map((c) => <SelectItem key={c.id} value={c.slug}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Mô tả</label>
-        <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
+        <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Cách sử dụng</label>
         <Input value={form.usage_info} onChange={(e) => setForm({ ...form, usage_info: e.target.value })} />
       </div>
       <div>
-        <label className="text-sm font-medium mb-1 block">URL ảnh</label>
-        <Input value={form.image_url || ""} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+        <label className="text-sm font-medium mb-1 block">Ảnh sản phẩm</label>
+        <ImageUpload value={form.image_url || ""} onChange={(url) => setForm({ ...form, image_url: url })} folder="products" />
       </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} id="active" />
@@ -297,15 +301,15 @@ const NewsForm = ({ post, onDone }: { post: NewsPost | null; onDone: () => void 
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Tóm tắt</label>
-        <Textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows={2} />
+        <Input value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Nội dung</label>
-        <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={10} placeholder="Hỗ trợ markdown: ## Tiêu đề, - Danh sách..." />
+        <RichTextEditor value={form.content} onChange={(html) => setForm({ ...form, content: html })} />
       </div>
       <div>
-        <label className="text-sm font-medium mb-1 block">URL ảnh</label>
-        <Input value={form.image_url || ""} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+        <label className="text-sm font-medium mb-1 block">Ảnh đại diện</label>
+        <ImageUpload value={form.image_url || ""} onChange={(url) => setForm({ ...form, image_url: url })} folder="news" />
       </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} id="published" />
