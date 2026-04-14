@@ -21,9 +21,9 @@ jobs:
       - name: Copy image to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ vars.HOST }}
           username: ${{ vars.USERNAME }}
-          key: ${{ vars.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           source: "vite-app.tar"
           target: "/home/dev-ops/"
 
