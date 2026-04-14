@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { Plus, Pencil, Trash2, LogOut } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import CategoriesAdmin from "@/components/admin/CategoriesAdmin";
+import { useNewsCategories } from "@/hooks/useNewsCategories";
 
 type Product = Tables<"products">;
 type NewsPost = Tables<"news_posts">;
@@ -22,8 +24,6 @@ const categoryLabels: Record<string, string> = {
   "chan-nuoi": "Chăn nuôi",
   "thuy-san": "Thủy sản",
 };
-
-const newsCats = ["Phát triển bền vững", "Tin tức thị trường", "Kiến thức chuyên ngành"];
 
 const AdminPage = () => {
   const { isAdmin, loading, signOut, user } = useAuth();
@@ -44,9 +44,11 @@ const AdminPage = () => {
             <TabsList className="mb-6">
               <TabsTrigger value="products">Sản phẩm</TabsTrigger>
               <TabsTrigger value="news">Bài viết</TabsTrigger>
+              <TabsTrigger value="categories">Danh mục bài viết</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
             <TabsContent value="news"><NewsAdmin /></TabsContent>
+            <TabsContent value="categories"><CategoriesAdmin /></TabsContent>
           </Tabs>
         </div>
       </section>
@@ -254,11 +256,12 @@ const NewsAdmin = () => {
 
 const NewsForm = ({ post, onDone }: { post: NewsPost | null; onDone: () => void }) => {
   const { user } = useAuth();
+  const { data: categories = [] } = useNewsCategories();
   const [form, setForm] = useState({
     title: post?.title || "",
     excerpt: post?.excerpt || "",
     content: post?.content || "",
-    category: post?.category || "Tin tức thị trường",
+    category: post?.category || "",
     is_published: post?.is_published ?? false,
     image_url: post?.image_url || "",
   });
@@ -286,9 +289,9 @@ const NewsForm = ({ post, onDone }: { post: NewsPost | null; onDone: () => void 
       <div>
         <label className="text-sm font-medium mb-1 block">Danh mục</label>
         <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder="Chọn danh mục" /></SelectTrigger>
           <SelectContent>
-            {newsCats.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            {categories.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>

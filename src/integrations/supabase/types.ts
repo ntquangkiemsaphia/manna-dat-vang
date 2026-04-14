@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      news_categories: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       news_posts: {
         Row: {
           author_id: string | null
