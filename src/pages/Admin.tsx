@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { Plus, Pencil, Trash2, LogOut } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
+import CategoriesAdmin from "@/components/admin/CategoriesAdmin";
+import { useNewsCategories } from "@/hooks/useNewsCategories";
 
 type Product = Tables<"products">;
 type NewsPost = Tables<"news_posts">;
@@ -22,8 +24,6 @@ const categoryLabels: Record<string, string> = {
   "chan-nuoi": "Chăn nuôi",
   "thuy-san": "Thủy sản",
 };
-
-const newsCats = ["Phát triển bền vững", "Tin tức thị trường", "Kiến thức chuyên ngành"];
 
 const AdminPage = () => {
   const { isAdmin, loading, signOut, user } = useAuth();
