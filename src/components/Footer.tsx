@@ -47,15 +47,15 @@ const Footer = () => (
           <ul className="space-y-3 text-sm opacity-70">
             <li className="flex items-start gap-2">
               <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-              <span>TP. Hồ Chí Minh, Việt Nam</span>
+              <span>Số nhà 1111 đường Ngô Gia Tự, phường Việt Hưng, thành phố Hà Nội, Việt Nam</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>ĐCSX: Thôn Trung, xã Đông Anh, thành phố Hà Nội, Việt Nam</span>
             </li>
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 shrink-0" />
-              <a href="tel:0901234567" className="hover:opacity-100">0901 234 567</a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail className="w-4 h-4 shrink-0" />
-              <a href="mailto:info@mannadatvang.vn" className="hover:opacity-100">info@mannadatvang.vn</a>
+              <a href="tel:0395830009" className="hover:opacity-100">0395 830 009</a>
             </li>
           </ul>
         </div>

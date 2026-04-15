@@ -35,8 +35,8 @@ const Header = () => {
       <div className="bg-primary">
         <div className="container flex items-center justify-between py-1.5 text-sm text-primary-foreground">
           <div className="flex items-center gap-4">
-            <a href="tel:0901234567" className="flex items-center gap-1 hover:opacity-80">
-              <Phone className="w-3.5 h-3.5" /> 0901 234 567
+            <a href="tel:0395830009" className="flex items-center gap-1 hover:opacity-80">
+              <Phone className="w-3.5 h-3.5" /> 0395 830 009
             </a>
           </div>
           <div className="hidden md:flex items-center gap-3">

@@ -5,7 +5,10 @@ import HeroBanner from "@/components/HeroBanner";
 import SectionTitle from "@/components/SectionTitle";
 import heroHome from "@/assets/hero-home.jpg";
 import aboutStory from "@/assets/about-story.jpg";
-import { Leaf, FlaskConical, Fish, Award, Users, Globe, ArrowRight } from "lucide-react";
+import { Leaf, FlaskConical, Fish, ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const productCategories = [
   { icon: Leaf, title: "Phân bón sinh học", desc: "Chế phẩm giải độc đất, phân bón sinh học từ thảo dược thiên nhiên giúp cây trồng phát triển bền vững.", link: "/san-pham/phan-bon" },
@@ -25,6 +28,87 @@ const newsItems = [
   { title: "Xu hướng sử dụng chế phẩm sinh học trong trồng trọt 2026", category: "Tin tức thị trường", date: "08/04/2026" },
   { title: "Kỹ thuật xử lý đất bằng vi sinh vật có lợi", category: "Kiến thức chuyên ngành", date: "05/04/2026" },
 ];
+
+const PatentsSection = () => {
+  const { data: patents = [] } = useQuery({
+    queryKey: ["patents"],
+    queryFn: async () => {
+      const { data } = await supabase.from("patents").select("*").order("sort_order");
+      return data || [];
+    },
+  });
+  const [selected, setSelected] = useState(0);
+
+  if (patents.length === 0) return null;
+
+  return (
+    <section className="py-20 gradient-earth">
+      <div className="container">
+        <SectionTitle label="Uy tín & Chất lượng" title="Sở hữu độc quyền sáng chế" />
+        {/* Gallery */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {patents.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => setSelected(i)}
+              className={`rounded-xl overflow-hidden border-2 transition-all ${selected === i ? "border-primary shadow-lg scale-[1.02]" : "border-transparent hover:border-primary/30"}`}
+            >
+              {p.image_url ? (
+                <img src={p.image_url} alt={p.title} className="w-full h-40 object-cover" loading="lazy" />
+              ) : (
+                <div className="w-full h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">{p.title}</div>
+              )}
+            </button>
+          ))}
+        </div>
+        {/* Selected detail */}
+        <div className="bg-card rounded-2xl p-6 shadow-card text-center max-w-2xl mx-auto">
+          <h3 className="text-xl font-serif font-semibold text-foreground mb-2">{patents[selected]?.title}</h3>
+          {patents[selected]?.description && (
+            <p className="text-muted-foreground text-sm leading-relaxed">{patents[selected].description}</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const PartnersSection = () => {
+  const { data: partners = [] } = useQuery({
+    queryKey: ["partners"],
+    queryFn: async () => {
+      const { data } = await supabase.from("partners").select("*").order("sort_order");
+      return data || [];
+    },
+  });
+
+  if (partners.length === 0) return null;
+
+  // Double the array for seamless loop
+  const doubled = [...partners, ...partners];
+
+  return (
+    <section className="py-16 overflow-hidden">
+      <div className="container mb-8">
+        <SectionTitle label="Hệ sinh thái" title="Đối tác của chúng tôi" />
+      </div>
+      <div className="relative">
+        <div className="flex animate-marquee gap-12 items-center" style={{ width: `${doubled.length * 200}px` }}>
+          {doubled.map((p, i) => (
+            <div key={`${p.id}-${i}`} className="flex flex-col items-center min-w-[160px]">
+              {p.logo_url ? (
+                <img src={p.logo_url} alt={p.name} className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300" loading="lazy" />
+              ) : (
+                <div className="h-16 w-32 bg-muted rounded flex items-center justify-center text-sm text-muted-foreground">{p.name}</div>
+              )}
+              <p className="mt-2 text-xs text-muted-foreground text-center">{p.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const Index = () => (
   <Layout>
@@ -113,25 +197,11 @@ const Index = () => (
       </div>
     </section>
 
-    {/* Certifications */}
-    <section className="py-20 gradient-earth">
-      <div className="container">
-        <SectionTitle label="Uy tín & Chất lượng" title="Chứng nhận & Giải thưởng" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { icon: Award, label: "Chứng nhận ISO" },
-            { icon: Globe, label: "Tiêu chuẩn quốc tế" },
-            { icon: Users, label: "Đối tác chiến lược" },
-            { icon: Leaf, label: "Nông nghiệp hữu cơ" },
-          ].map((cert) => (
-            <div key={cert.label} className="bg-card rounded-xl p-6 text-center shadow-card">
-              <cert.icon className="w-10 h-10 mx-auto text-primary mb-3" />
-              <p className="text-sm font-medium text-foreground">{cert.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    {/* Patents */}
+    <PatentsSection />
+
+    {/* Partners */}
+    <PartnersSection />
   </Layout>
 );
 
