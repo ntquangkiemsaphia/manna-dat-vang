@@ -14,6 +14,8 @@ import { Navigate } from "react-router-dom";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import CategoriesAdmin from "@/components/admin/CategoriesAdmin";
 import ProductCategoriesAdmin, { useProductCategories } from "@/components/admin/ProductCategoriesAdmin";
+import PatentsAdmin from "@/components/admin/PatentsAdmin";
+import PartnersAdmin from "@/components/admin/PartnersAdmin";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 import ImageUpload from "@/components/admin/ImageUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -42,11 +44,15 @@ const AdminPage = () => {
               <TabsTrigger value="product-categories">DM Sản phẩm</TabsTrigger>
               <TabsTrigger value="news">Bài viết</TabsTrigger>
               <TabsTrigger value="categories">DM Bài viết</TabsTrigger>
+              <TabsTrigger value="patents">Sáng chế</TabsTrigger>
+              <TabsTrigger value="partners">Đối tác</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
             <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
             <TabsContent value="news"><NewsAdmin /></TabsContent>
             <TabsContent value="categories"><CategoriesAdmin /></TabsContent>
+            <TabsContent value="patents"><PatentsAdmin /></TabsContent>
+            <TabsContent value="partners"><PartnersAdmin /></TabsContent>
           </Tabs>
         </div>
       </section>
