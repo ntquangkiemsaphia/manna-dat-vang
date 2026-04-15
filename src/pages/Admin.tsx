@@ -176,11 +176,11 @@ const ProductForm = ({ product, onDone }: { product: Product | null; onDone: () 
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Mô tả</label>
-        <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        <RichTextEditor value={form.description} onChange={(html) => setForm({ ...form, description: html })} />
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Cách sử dụng</label>
-        <Input value={form.usage_info} onChange={(e) => setForm({ ...form, usage_info: e.target.value })} />
+        <RichTextEditor value={form.usage_info} onChange={(html) => setForm({ ...form, usage_info: html })} />
       </div>
       <div>
         <label className="text-sm font-medium mb-1 block">Ảnh sản phẩm</label>
