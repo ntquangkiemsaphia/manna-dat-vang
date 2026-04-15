@@ -32,9 +32,9 @@ const Contact = () => {
 
               <div className="space-y-4">
                 {[
-                  { icon: MapPin, title: "Địa chỉ", text: "TP. Hồ Chí Minh, Việt Nam" },
-                  { icon: Phone, title: "Điện thoại", text: "0901 234 567" },
-                  { icon: Mail, title: "Email", text: "info@mannadatvang.vn" },
+                  { icon: MapPin, title: "Địa chỉ", text: "Số nhà 1111 đường Ngô Gia Tự, phường Việt Hưng, thành phố Hà Nội, Việt Nam" },
+                  { icon: MapPin, title: "Địa chỉ sản xuất", text: "Thôn Trung, xã Đông Anh, thành phố Hà Nội, Việt Nam" },
+                  { icon: Phone, title: "Hotline", text: "0395 830 009" },
                   { icon: Clock, title: "Giờ làm việc", text: "Thứ 2 - Thứ 6: 8:00 - 17:30" },
                 ].map((info) => (
                   <div key={info.title} className="flex items-start gap-3">
