@@ -24,7 +24,7 @@ const HeroBanner = ({ image, title, subtitle, ctaText, ctaLink, compact }: HeroB
         </p>
       )}
       {ctaText && ctaLink && (
-        <Button className="mt-8 gradient-gold text-foreground border-0 px-8 py-6 text-base font-semibold animate-fade-up" style={{ animationDelay: "0.3s" }} asChild>
+        <Button className="mt-8 gradient-gold text-foreground border-0 px-8 py-6 text-base font-semibold animate-fade-up shadow-lg" style={{ animationDelay: "0.3s" }} asChild>
           <Link to={ctaLink}>{ctaText}</Link>
         </Button>
       )}
