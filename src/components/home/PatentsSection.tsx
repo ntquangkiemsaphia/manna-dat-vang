@@ -27,7 +27,7 @@ const PatentsSection = () => {
             <button
               key={p.id}
               onClick={() => setSelected(i)}
-              className={`rounded-xl overflow-hidden border-2 transition-all ${selected === i ? "border-secondary shadow-lg scale-[1.02]" : "border-transparent hover:border-secondary/30"}`}
+              className={`w-[calc(50%-0.5rem)] md:w-[220px] rounded-xl overflow-hidden border-2 transition-all ${selected === i ? "border-secondary shadow-lg scale-[1.02]" : "border-transparent hover:border-secondary/30"}`}
             >
               {p.image_url ? (
                 <img src={p.image_url} alt={p.title} className="w-full h-40 object-cover" loading="lazy" />
