@@ -74,6 +74,51 @@ export type Database = {
         }
         Relationships: []
       }
+      page_sections: {
+        Row: {
+          created_at: string
+          cta_link: string
+          cta_text: string
+          description: string
+          id: string
+          image_url: string | null
+          page: string
+          section: string
+          sort_order: number
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          page: string
+          section: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          page?: string
+          section?: string
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           created_at: string
