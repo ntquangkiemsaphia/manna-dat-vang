@@ -26,7 +26,7 @@ const NewsDetail = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_posts")
-        .select("id, title, created_at, category")
+        .select("id, title, created_at, category, image_url")
         .eq("is_published", true)
         .eq("category", post!.category)
         .neq("id", id!)

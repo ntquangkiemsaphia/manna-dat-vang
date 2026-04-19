@@ -35,11 +35,10 @@ const News = () => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeCategory === cat
-                    ? "gradient-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-accent"
-                }`}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat
+                  ? "gradient-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-accent"
+                  }`}
               >
                 {cat}
               </button>
@@ -52,8 +51,15 @@ const News = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((news) => (
                 <Link key={news.id} to={`/tin-tuc/${news.id}`} className="block">
-                  <article className="bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 group h-full">
-                    <div className="h-48 gradient-primary opacity-20" />
+                  <article className="relative bg-card rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 group aspect-square">
+
+                    {/* Ảnh full card */}
+                    <img
+                      src={news.image_url}
+                      alt={news.title}
+                      className="absolute inset-0 w-full h-1/2 object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="h-1/2 gradient-primary opacity-20" />
                     <div className="p-6">
                       <span className="text-xs font-semibold text-secondary uppercase tracking-wider">{news.category}</span>
                       <h3 className="mt-2 text-lg font-serif font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{news.title}</h3>
