@@ -96,30 +96,40 @@ const ProductCategory = () => {
             <div className="text-center text-muted-foreground">Đang tải...</div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
-                <div key={product.id} className="bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 group">
-                  <div className="h-48 gradient-primary flex items-center justify-center">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <Icon className="w-16 h-16 text-primary-foreground opacity-40" />
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-serif font-semibold text-foreground mb-2">{product.name}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">{product.description}</p>
-                    <p className="text-xs text-accent-foreground bg-accent rounded-md px-3 py-1.5 inline-block mb-4">Cách dùng: {product.usage_info}</p>
-                    <div className="flex gap-3">
-                      <Button size="sm" className="gradient-primary text-primary-foreground border-0 flex-1" asChild>
-                        <Link to={`/san-pham/chi-tiet/${product.id}`}>Chi tiết</Link>
-                      </Button>
-                      <Button size="sm" variant="outline" className="border-primary text-primary flex-1" asChild>
-                        <Link to="/lien-he"><Phone className="w-3.5 h-3.5 mr-1" /> Liên hệ</Link>
-                      </Button>
+              {products.map((product) => {
+                const plainDesc = product.description?.replace(/<[^>]*>/g, "") || "";
+                const plainUsage = product.usage_info?.replace(/<[^>]*>/g, "") || "";
+                return (
+                  <div key={product.id} className="bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 group flex flex-col h-full">
+                    {/* Square fixed image */}
+                    <div className="relative aspect-square w-full bg-accent overflow-hidden flex-shrink-0">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      ) : (
+                        <div className="absolute inset-0 gradient-primary flex items-center justify-center">
+                          <Icon className="w-16 h-16 text-primary-foreground opacity-40" />
+                        </div>
+                      )}
+                    </div>
+                    {/* Content area grows to fill, buttons stick to bottom */}
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="text-lg font-serif font-semibold text-foreground mb-2 line-clamp-2">{product.name}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{plainDesc}</p>
+                      {plainUsage && (
+                        <p className="text-xs text-accent-foreground bg-accent rounded-md px-3 py-1.5 inline-block mb-4 line-clamp-2">Cách dùng: {plainUsage}</p>
+                      )}
+                      <div className="flex gap-3 mt-auto">
+                        <Button size="sm" className="gradient-primary text-primary-foreground border-0 flex-1" asChild>
+                          <Link to={`/san-pham/chi-tiet/${product.id}`}>Chi tiết</Link>
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-primary text-primary flex-1" asChild>
+                          <Link to="/lien-he"><Phone className="w-3.5 h-3.5 mr-1" /> Liên hệ</Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

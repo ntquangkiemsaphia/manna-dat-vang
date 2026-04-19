@@ -41,40 +41,38 @@ const ProductsBento = () => {
             return (
               <div
                 key={product.id}
-                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card ${
+                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card flex flex-col ${
                   isOdd ? "md:mt-8" : ""
                 }`}
               >
-                {/* Product image */}
-                <div className="relative h-56 md:h-64 overflow-hidden bg-accent">
+                {/* Square fixed image */}
+                <div className="relative aspect-square w-full overflow-hidden bg-accent flex-shrink-0">
                   {product.image_url ? (
                     <img
                       src={product.image_url}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center">
                       <Package className="w-16 h-16 text-muted-foreground opacity-30" />
                     </div>
                   )}
-                  {/* Subtle gradient overlay at bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
 
                 {/* Info */}
-                <div className="p-6">
-                  <h3 className="text-lg font-serif font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-lg font-serif font-semibold text-foreground mb-1 group-hover:text-primary transition-colors line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                    {product.description?.replace(/<[^>]*>/g, "").slice(0, 100)}
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                    {product.description?.replace(/<[^>]*>/g, "").slice(0, 160)}
                   </p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground mt-auto self-start"
                     asChild
                   >
                     <Link to={`/san-pham/chi-tiet/${product.id}`}>Xem thêm</Link>

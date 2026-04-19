@@ -32,18 +32,20 @@ const JourneySection = () => {
         </div>
 
         {/* Timeline bar */}
-        <div className="flex items-center justify-center gap-0 max-w-3xl mx-auto">
+        <div className="flex items-stretch justify-center gap-0 max-w-3xl mx-auto">
           {milestones.map((m, i) => (
             <button
               key={m.year}
               onClick={() => setActive(i)}
-              className="flex-1 group relative"
+              className="flex-1 group relative pt-3 pb-2"
             >
-              <div className={`h-1 w-full ${i <= active ? "bg-secondary" : "bg-white/20"} transition-colors`} />
-              <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 transition-all ${
-                i === active ? "bg-secondary border-secondary scale-125" : i < active ? "bg-secondary border-secondary" : "bg-white/30 border-white/30"
-              }`} />
-              <p className={`mt-4 text-xs ${i === active ? "text-secondary font-semibold" : "text-white/50"} transition-colors`}>
+              <div className="relative h-4 flex items-center">
+                <div className={`h-1 w-full ${i <= active ? "bg-secondary" : "bg-white/20"} transition-colors`} />
+                <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 transition-all ${
+                  i === active ? "bg-secondary border-secondary scale-125" : i < active ? "bg-secondary border-secondary" : "bg-white/30 border-white/30"
+                }`} />
+              </div>
+              <p className={`mt-6 text-xs ${i === active ? "text-secondary font-semibold" : "text-white/50"} transition-colors whitespace-nowrap`}>
                 {m.year}
               </p>
             </button>
