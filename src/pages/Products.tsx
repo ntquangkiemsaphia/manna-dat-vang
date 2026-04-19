@@ -97,8 +97,8 @@ const ProductCategory = () => {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => {
-                const plainDesc = product.description?.replace(/<[^>]*>/g, "") || "";
-                const plainUsage = product.usage_info?.replace(/<[^>]*>/g, "") || "";
+                const plainDesc = stripHtml(product.description);
+                const plainUsage = stripHtml(product.usage_info);
                 return (
                   <div key={product.id} className="bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 group flex flex-col h-full">
                     {/* Square fixed image */}
@@ -111,13 +111,24 @@ const ProductCategory = () => {
                         </div>
                       )}
                     </div>
-                    {/* Content area grows to fill, buttons stick to bottom */}
+                    {/* Content area: fixed-height sections to keep cards uniform */}
                     <div className="p-6 flex flex-col flex-1">
-                      <h3 className="text-lg font-serif font-semibold text-foreground mb-2 line-clamp-2">{product.name}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{plainDesc}</p>
-                      {plainUsage && (
-                        <p className="text-xs text-accent-foreground bg-accent rounded-md px-3 py-1.5 inline-block mb-4 line-clamp-2">Cách dùng: {plainUsage}</p>
-                      )}
+                      {/* Title - fixed 2 lines */}
+                      <h3 className="text-lg font-serif font-semibold text-foreground mb-2 line-clamp-2 min-h-[3.5rem]">
+                        {product.name}
+                      </h3>
+                      {/* Description - fixed 3 lines */}
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3 min-h-[3.75rem]">
+                        {plainDesc}
+                      </p>
+                      {/* Usage - fixed 2 lines reserved space */}
+                      <div className="mb-4 min-h-[3rem]">
+                        {plainUsage && (
+                          <p className="text-xs text-accent-foreground bg-accent rounded-md px-3 py-1.5 line-clamp-2">
+                            <span className="font-semibold">Cách dùng: </span>{plainUsage}
+                          </p>
+                        )}
+                      </div>
                       <div className="flex gap-3 mt-auto">
                         <Button size="sm" className="gradient-primary text-primary-foreground border-0 flex-1" asChild>
                           <Link to={`/san-pham/chi-tiet/${product.id}`}>Chi tiết</Link>
