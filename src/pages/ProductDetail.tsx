@@ -83,12 +83,18 @@ const ProductDetail = () => {
             <div>
               <span className="text-xs font-semibold text-secondary uppercase tracking-wider">{catName}</span>
               <h1 className="mt-2 text-3xl font-serif font-bold text-foreground">{product.name}</h1>
-              <p className="mt-4 text-muted-foreground leading-relaxed">{product.description}</p>
+              <div
+                className="mt-4 prose prose-sm max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
+                dangerouslySetInnerHTML={{ __html: product.description || "" }}
+              />
 
               {product.usage_info && (
                 <div className="mt-6 bg-accent rounded-xl p-4">
                   <h3 className="text-sm font-semibold text-foreground mb-2">Cách sử dụng</h3>
-                  <p className="text-sm text-muted-foreground">{product.usage_info}</p>
+                  <div
+                    className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary"
+                    dangerouslySetInnerHTML={{ __html: product.usage_info }}
+                  />
                 </div>
               )}
 
