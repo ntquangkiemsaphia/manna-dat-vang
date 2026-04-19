@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Package } from "lucide-react";
 import SectionTitle from "@/components/SectionTitle";
+import { stripHtml } from "@/lib/html";
 
 const ProductsBento = () => {
   const { data: products = [], isLoading } = useQuery({
@@ -61,13 +62,13 @@ const ProductsBento = () => {
                   )}
                 </div>
 
-                {/* Info */}
+                {/* Info — fixed-height sections to keep cards uniform */}
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-lg font-serif font-semibold text-foreground mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="text-lg font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                    {product.description?.replace(/<[^>]*>/g, "").slice(0, 160)}
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4 min-h-[3.75rem]">
+                    {stripHtml(product.description)}
                   </p>
                   <Button
                     size="sm"

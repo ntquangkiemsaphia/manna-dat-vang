@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import heroProducts from "@/assets/hero-products.jpg";
 import { Leaf, FlaskConical, Fish, ArrowRight, Phone, Package } from "lucide-react";
+import { stripHtml } from "@/lib/html";
 
 const iconMap: Record<string, typeof Leaf> = {
   "phan-bon": Leaf,
