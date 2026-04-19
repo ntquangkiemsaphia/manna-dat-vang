@@ -1,0 +1,69 @@
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Package } from "lucide-react";
+import SectionTitle from "@/components/SectionTitle";
+
+const ProductsBento = () => {
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["featured-products"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at")
+        .limit(4);
+      return data || [];
+    },
+  });
+
+  if (isLoading || products.length === 0) return null;
+
+  const gridItems = products.slice(0, 4);
+
+  return (
+    <section className="py-20 bg-gradient-to-b from-[hsl(220,30%,96%)] to-[hsl(224,25%,93%)]">
+      <div className="container">
+        <SectionTitle
+          label="Sản phẩm nổi bật"
+          title="Manna Đất Vàng — Sản phẩm chất lượng"
+          description="Các sản phẩm sinh học hàng đầu phục vụ nông nghiệp bền vững."
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          {gridItems.map((product, i) => {
+            const isOdd = i % 2 === 1;
+            return (
+              <Link
+                to={`/san-pham/chi-tiet/${product.id}`}
+                key={product.id}
+                aria-label={product.name}
+                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card block ${
+                  isOdd ? "md:mt-8" : ""
+                }`}
+              >
+                <div className="relative aspect-square w-full overflow-hidden bg-accent">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Package className="w-16 h-16 text-muted-foreground opacity-30" />
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProductsBento;

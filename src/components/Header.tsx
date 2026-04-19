@@ -27,15 +27,15 @@ const Header = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
+  const isActive = (path: string) => location.pathname === path || (path !== "/" && location.pathname.startsWith(path + "/"));
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
       {/* Top bar */}
-      <div className="bg-primary">
-        <div className="container flex items-center justify-between py-1.5 text-sm text-primary-foreground">
+      <div className="section-navy">
+        <div className="container flex items-center justify-between py-1.5 text-sm text-white">
           <div className="flex items-center gap-4">
-            <a href="tel:0395830009" className="flex items-center gap-1 hover:opacity-80">
+            <a href="tel:0395830009" className="flex items-center gap-1 hover:text-secondary transition-colors">
               <Phone className="w-3.5 h-3.5" /> 0395 830 009
             </a>
           </div>
