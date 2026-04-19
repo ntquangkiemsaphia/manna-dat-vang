@@ -22,7 +22,7 @@ const PatentsSection = () => {
           <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Uy tín & Chất lượng</span>
           <h2 className="mt-2 text-3xl md:text-4xl font-serif font-bold text-white">Sở hữu độc quyền sáng chế</h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
           {patents.map((p: any, i: number) => (
             <button
               key={p.id}
