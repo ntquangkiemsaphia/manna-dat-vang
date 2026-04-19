@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Package } from "lucide-react";
 import SectionTitle from "@/components/SectionTitle";
-import { stripHtml } from "@/lib/html";
 
 const ProductsBento = () => {
   const { data: products = [], isLoading } = useQuery({
@@ -22,7 +20,6 @@ const ProductsBento = () => {
 
   if (isLoading || products.length === 0) return null;
 
-  // Bento grid layout: 2 columns with alternating large/small cards
   const gridItems = products.slice(0, 4);
 
   return (
@@ -34,20 +31,19 @@ const ProductsBento = () => {
           description="Các sản phẩm sinh học hàng đầu phục vụ nông nghiệp bền vững."
         />
 
-        {/* Bento grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {gridItems.map((product, i) => {
-            // Alternate: odd index cards shift right with mt offset for mosaic feel
             const isOdd = i % 2 === 1;
             return (
-              <div
+              <Link
+                to={`/san-pham/chi-tiet/${product.id}`}
                 key={product.id}
-                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card flex flex-col ${
+                aria-label={product.name}
+                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card block ${
                   isOdd ? "md:mt-8" : ""
                 }`}
               >
-                {/* Square fixed image */}
-                <div className="relative aspect-square w-full overflow-hidden bg-accent flex-shrink-0">
+                <div className="relative aspect-square w-full overflow-hidden bg-accent">
                   {product.image_url ? (
                     <img
                       src={product.image_url}
@@ -61,25 +57,7 @@ const ProductsBento = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Info — fixed-height sections to keep cards uniform */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-lg font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4 min-h-[3.75rem]">
-                    {stripHtml(product.description)}
-                  </p>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground mt-auto self-start"
-                    asChild
-                  >
-                    <Link to={`/san-pham/chi-tiet/${product.id}`}>Xem thêm</Link>
-                  </Button>
-                </div>
-              </div>
+              </Link>
             );
           })}
         </div>
