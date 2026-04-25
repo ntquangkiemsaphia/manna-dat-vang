@@ -23,16 +23,22 @@ const JourneySection = () => {
 
         {/* Active milestone detail */}
         {current && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-xl mx-auto mb-12 border border-white/10">
-            <p className="text-secondary font-serif text-2xl font-bold mb-3">{current.year}</p>
-            {current.image_url && (
-              <div className="mx-auto mb-4 w-32 h-32 rounded-full overflow-hidden border-4 border-secondary/40 shadow-lg">
+          <div
+            key={current.id}
+            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-xl mx-auto mb-12 border border-white/10 animate-fade-in"
+          >
+            <p className="text-secondary font-serif text-2xl font-bold mb-4">{current.year}</p>
+            {current.image_url ? (
+              <div className="mx-auto mb-5 w-40 h-40 rounded-full overflow-hidden border-4 border-secondary/60 shadow-2xl ring-4 ring-secondary/20">
                 <img
                   src={current.image_url}
                   alt={current.title}
                   className="w-full h-full object-cover"
-                  loading="lazy"
                 />
+              </div>
+            ) : (
+              <div className="mx-auto mb-5 w-40 h-40 rounded-full border-4 border-dashed border-white/30 flex items-center justify-center text-white/40 text-xs text-center px-2">
+                Chưa có ảnh
               </div>
             )}
             <h3 className="text-xl font-serif font-semibold mb-2">{current.title}</h3>

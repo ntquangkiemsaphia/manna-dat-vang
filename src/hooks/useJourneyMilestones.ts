@@ -20,4 +20,6 @@ export const useJourneyMilestones = () =>
         .order("sort_order");
       return (data || []) as JourneyMilestone[];
     },
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
