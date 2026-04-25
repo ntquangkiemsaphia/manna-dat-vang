@@ -17,6 +17,7 @@ import ProductCategoriesAdmin, { useProductCategories } from "@/components/admin
 import PatentsAdmin from "@/components/admin/PatentsAdmin";
 import PartnersAdmin from "@/components/admin/PartnersAdmin";
 import PageSectionsAdmin from "@/components/admin/PageSectionsAdmin";
+import JourneyAdmin from "@/components/admin/JourneyAdmin";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 import ImageUpload from "@/components/admin/ImageUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -48,6 +49,7 @@ const AdminPage = () => {
               <TabsTrigger value="patents">Sáng chế</TabsTrigger>
               <TabsTrigger value="partners">Đối tác</TabsTrigger>
               <TabsTrigger value="pages">Ảnh & Section</TabsTrigger>
+              <TabsTrigger value="journey">Hành trình</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
             <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
@@ -56,6 +58,7 @@ const AdminPage = () => {
             <TabsContent value="patents"><PatentsAdmin /></TabsContent>
             <TabsContent value="partners"><PartnersAdmin /></TabsContent>
             <TabsContent value="pages"><PageSectionsAdmin /></TabsContent>
+            <TabsContent value="journey"><JourneyAdmin /></TabsContent>
           </Tabs>
         </div>
       </section>
