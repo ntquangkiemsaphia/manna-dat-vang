@@ -9,7 +9,7 @@ const Footer = () => (
         {/* Brand */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Manna Đất Vàng" className="h-12 w-12" />
+            <img src={logo} alt="Manna Đất Vàng" className="h-12 w-auto max-w-[64px] object-contain" />
             <div>
               <p className="font-serif text-lg font-bold leading-tight text-white">MANNA ĐẤT VÀNG</p>
               <p className="text-sm text-white/60">Nông nghiệp sinh học bền vững</p>

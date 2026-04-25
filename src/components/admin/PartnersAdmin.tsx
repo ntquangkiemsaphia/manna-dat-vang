@@ -56,7 +56,7 @@ const PartnersAdmin = () => {
           <tbody>
             {partners.map((p) => (
               <tr key={p.id} className="border-b border-border last:border-0">
-                <td className="p-3">{p.logo_url && <img src={p.logo_url} alt={p.name} className="w-12 h-12 object-contain rounded" />}</td>
+                <td className="p-3">{p.logo_url && <img src={p.logo_url} alt={p.name} className="h-12 w-auto max-w-[80px] object-contain rounded" />}</td>
                 <td className="p-3 font-medium">{p.name}</td>
                 <td className="p-3 hidden md:table-cell text-muted-foreground">{p.sort_order}</td>
                 <td className="p-3 text-right">
