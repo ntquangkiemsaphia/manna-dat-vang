@@ -83,42 +83,29 @@ const NewsDetail = () => {
             </h1>
 
             {post.excerpt && (
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8 border-l-4 border-primary pl-4">
-                {post.excerpt}
-              </p>
+              <div
+                className="text-lg text-muted-foreground leading-relaxed mb-8 border-l-4 border-primary pl-4 [&_p]:mb-2 [&_img]:rounded-lg [&_img]:my-3"
+                dangerouslySetInnerHTML={{ __html: post.excerpt }}
+              />
             )}
 
             {post.image_url && (
               <img src={post.image_url} alt={post.title} className="w-full h-80 object-cover rounded-2xl mb-8" />
             )}
 
-            <div className="prose prose-lg max-w-none text-foreground">
-              {post.content.split("\n").map((paragraph, i) => {
-                if (paragraph.startsWith("## ")) {
-                  return <h2 key={i} className="text-2xl font-serif font-bold mt-8 mb-4">{paragraph.replace("## ", "")}</h2>;
-                }
-                if (paragraph.startsWith("- **")) {
-                  const parts = paragraph.replace("- **", "").split("**:");
-                  return (
-                    <div key={i} className="flex gap-2 mb-2 ml-4">
-                      <span className="font-semibold">{parts[0]}:</span>
-                      <span className="text-muted-foreground">{parts[1]}</span>
-                    </div>
-                  );
-                }
-                if (paragraph.match(/^\d+\. \*\*/)) {
-                  const parts = paragraph.replace(/^\d+\. \*\*/, "").split("**:");
-                  return (
-                    <div key={i} className="flex gap-2 mb-2 ml-4">
-                      <span className="font-semibold">• {parts[0]}:</span>
-                      <span className="text-muted-foreground">{parts[1]}</span>
-                    </div>
-                  );
-                }
-                if (!paragraph.trim()) return <br key={i} />;
-                return <p key={i} className="text-muted-foreground leading-relaxed mb-4">{paragraph}</p>;
-              })}
-            </div>
+            <div
+              className="prose prose-lg max-w-none text-foreground
+                         [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-4
+                         [&_h2]:text-2xl [&_h2]:font-serif [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:text-foreground
+                         [&_h3]:text-xl [&_h3]:font-serif [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3 [&_h3]:text-foreground
+                         [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4
+                         [&_li]:text-muted-foreground [&_li]:mb-1
+                         [&_a]:text-primary [&_a]:underline
+                         [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
+                         [&_img]:rounded-xl [&_img]:my-6 [&_img]:mx-auto [&_img]:max-w-full
+                         [&_strong]:font-semibold [&_strong]:text-foreground"
+              dangerouslySetInnerHTML={{ __html: post.content || "" }}
+            />
           </article>
 
           {relatedPosts && relatedPosts.length > 0 && (
