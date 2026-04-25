@@ -31,17 +31,14 @@ const ProductsBento = () => {
           description="Các sản phẩm sinh học hàng đầu phục vụ nông nghiệp bền vững."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {gridItems.map((product, i) => {
-            const isOdd = i % 2 === 1;
+        <div className="grid grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
+          {gridItems.map((product) => {
             return (
               <Link
                 to={`/san-pham/chi-tiet/${product.id}`}
                 key={product.id}
                 aria-label={product.name}
-                className={`group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card block ${
-                  isOdd ? "md:mt-8" : ""
-                }`}
+                className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 bg-card block"
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-accent">
                   {product.image_url ? (

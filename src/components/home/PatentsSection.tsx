@@ -22,17 +22,18 @@ const PatentsSection = () => {
           <span className="text-sm font-semibold text-secondary uppercase tracking-wider">Uy tín & Chất lượng</span>
           <h2 className="mt-2 text-3xl md:text-4xl font-serif font-bold text-white">Sở hữu độc quyền sáng chế</h2>
         </div>
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-8">
           {patents.map((p: any, i: number) => (
             <button
               key={p.id}
               onClick={() => setSelected(i)}
-              className={`w-[calc(50%-0.5rem)] md:w-[220px] rounded-xl overflow-hidden border-2 transition-all ${selected === i ? "border-secondary shadow-lg scale-[1.02]" : "border-transparent hover:border-secondary/30"}`}
+              className={`w-[calc(50%-0.5rem)] sm:w-[200px] md:w-[220px] rounded-xl overflow-hidden border-2 bg-white/5 transition-all ${selected === i ? "border-secondary shadow-lg scale-[1.02]" : "border-transparent hover:border-secondary/30"}`}
+              style={{ aspectRatio: "1 / 1.4142" }}
             >
               {p.image_url ? (
-                <img src={p.image_url} alt={p.title} className="w-full h-40 object-cover" loading="lazy" />
+                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover" loading="lazy" />
               ) : (
-                <div className="w-full h-40 bg-white/10 flex items-center justify-center text-white/50 text-sm">{p.title}</div>
+                <div className="w-full h-full bg-white/10 flex items-center justify-center text-white/50 text-sm p-4 text-center">{p.title}</div>
               )}
             </button>
           ))}
