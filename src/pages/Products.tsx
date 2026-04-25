@@ -26,7 +26,7 @@ const ProductsOverview = () => {
 
   return (
     <Layout>
-      <HeroBanner image={heroProducts} title="Sản phẩm & Dịch vụ" subtitle="Giải pháp sinh học toàn diện cho nông nghiệp tuần hoàn" compact />
+      <HeroBanner page="products" image={heroProducts} title="Sản phẩm & Dịch vụ" subtitle="Giải pháp sinh học toàn diện cho nông nghiệp tuần hoàn" compact />
       <section className="py-20">
         <div className="container">
           <SectionTitle label="Danh mục sản phẩm" title="Các trụ cột nông nghiệp sinh học" description="Chuỗi sản phẩm khép kín từ đất → cây trồng → chăn nuôi – thủy sản → thực phẩm sạch." />
@@ -89,7 +89,7 @@ const ProductCategory = () => {
 
   return (
     <Layout>
-      <HeroBanner image={heroProducts} title={catInfo?.name || "Sản phẩm"} subtitle={catInfo?.description || ""} compact />
+      <HeroBanner page="products" image={heroProducts} title={catInfo?.name || "Sản phẩm"} subtitle={catInfo?.description || ""} compact />
       <section className="py-20">
         <div className="container">
           <SectionTitle title={`Sản phẩm ${catInfo?.name || ""}`} description={catInfo?.description || ""} />

@@ -20,7 +20,7 @@ const Contact = () => {
 
   return (
     <Layout>
-      <HeroBanner image={heroAbout} title="Liên hệ với chúng tôi" subtitle="Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn" compact />
+      <HeroBanner page="contact" image={heroAbout} title="Liên hệ với chúng tôi" subtitle="Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn" compact />
 
       <section className="py-20">
         <div className="container">

@@ -27,7 +27,7 @@ const News = () => {
 
   return (
     <Layout>
-      <HeroBanner image={heroHome} title="Tin tức & Sự kiện" subtitle="Cập nhật thông tin mới nhất về nông nghiệp sinh học" compact />
+      <HeroBanner page="news" image={heroHome} title="Tin tức & Sự kiện" subtitle="Cập nhật thông tin mới nhất về nông nghiệp sinh học" compact />
       <section className="py-20">
         <div className="container">
           <div className="flex flex-wrap gap-2 mb-12 justify-center">
