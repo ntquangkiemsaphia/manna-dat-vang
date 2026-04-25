@@ -43,7 +43,7 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: text */}
           <div className="text-left">
-            <img src={logo} alt="Manna Đất Vàng" className="w-16 h-16 mb-6 drop-shadow" />
+            <img src={logo} alt="Manna Đất Vàng" className="h-16 w-auto max-w-[96px] object-contain mb-6 drop-shadow" />
             <p className="text-secondary font-semibold uppercase tracking-widest text-sm mb-3 animate-fade-up">
               {description}
             </p>
