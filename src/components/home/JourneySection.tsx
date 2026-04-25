@@ -1,24 +1,40 @@
 import { useState } from "react";
 import journeyBg from "@/assets/journey-bg.jpg";
 import { useJourneyMilestones } from "@/hooks/useJourneyMilestones";
+import { usePageSection } from "@/hooks/usePageSection";
 
 const JourneySection = () => {
   const { data: milestones = [] } = useJourneyMilestones();
+  const { data: section } = usePageSection("home", "journey");
   const [active, setActive] = useState(0);
 
   const safeActive = Math.min(active, Math.max(milestones.length - 1, 0));
   const current = milestones[safeActive];
 
+  // Lấy ảnh đầu tiên từ setting (hỗ trợ nhiều ảnh ngăn cách \n)
+  const bgFromSettings = section?.image_url?.split("\n").map((s) => s.trim()).filter(Boolean)[0];
+  const bgImage = bgFromSettings || journeyBg;
+  const heading = section?.title || "Hành trình của";
+  const subheading = section?.subtitle || "Manna Đất Vàng";
+  const intro =
+    section?.description ||
+    "Khởi nguồn từ niềm đam mê với cây thảo dược Việt Nam, Nhà khoa học Nguyễn Phương Dung đã dành trọn tuổi thanh xuân để nghiên cứu và ứng dụng giá trị của \"rừng thuốc\" quê hương vào nông nghiệp bền vững.";
+
   return (
     <section className="relative py-24 overflow-hidden">
-      <img src={journeyBg} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" width={1920} height={1080} />
+      <img
+        src={bgImage}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="lazy"
+      />
       <div className="absolute inset-0 bg-[hsl(224,60%,12%)]/85" />
       <div className="relative container text-center text-white">
-        <h2 className="font-serif text-3xl md:text-4xl font-bold mb-2">Hành trình của</h2>
-        <h2 className="font-serif text-3xl md:text-4xl font-bold text-secondary mb-12">Manna Đất Vàng</h2>
+        <h2 className="font-serif text-3xl md:text-4xl font-bold mb-2">{heading}</h2>
+        <h2 className="font-serif text-3xl md:text-4xl font-bold text-secondary mb-12">{subheading}</h2>
 
-        <p className="max-w-2xl mx-auto text-white/70 text-sm leading-relaxed mb-12">
-          Khởi nguồn từ niềm đam mê với cây thảo dược Việt Nam, Nhà khoa học Nguyễn Phương Dung đã dành trọn tuổi thanh xuân để nghiên cứu và ứng dụng giá trị của "rừng thuốc" quê hương vào nông nghiệp bền vững.
+        <p className="max-w-2xl mx-auto text-white/70 text-sm leading-relaxed mb-12 whitespace-pre-line">
+          {intro}
         </p>
 
         {/* Active milestone detail */}
