@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SectionTitle from "@/components/SectionTitle";
 import { Calendar } from "lucide-react";
+import { stripHtml } from "@/lib/html";
 
 const NewsSection = () => {
   const { data: news = [] } = useQuery({
@@ -63,7 +64,7 @@ const NewsSection = () => {
                   {featured.title}
                 </h3>
                 {featured.excerpt && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">{featured.excerpt}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{stripHtml(featured.excerpt)}</p>
                 )}
               </div>
             </Link>

@@ -14,7 +14,7 @@ const values = [
 
 const About = () => (
   <Layout>
-    <HeroBanner image={heroAbout} title="Về Manna Đất Vàng" subtitle="Hành trình 30 năm nghiên cứu và phát triển nông nghiệp sinh học Việt Nam" compact />
+    <HeroBanner page="about" image={heroAbout} title="Về Manna Đất Vàng" subtitle="Hành trình 30 năm nghiên cứu và phát triển nông nghiệp sinh học Việt Nam" compact />
 
     {/* Story */}
     <section className="py-20">

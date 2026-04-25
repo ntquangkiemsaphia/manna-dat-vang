@@ -26,6 +26,7 @@ export const usePageSection = (page: string, section: string) =>
         .maybeSingle();
       return (data || null) as PageSection | null;
     },
+    enabled: !!page && !!section,
   });
 
 export const usePageSections = () =>
