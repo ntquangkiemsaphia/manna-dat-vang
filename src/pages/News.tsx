@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import HeroBanner from "@/components/HeroBanner";
 import { supabase } from "@/integrations/supabase/client";
 import heroHome from "@/assets/hero-home.jpg";
+import { stripHtml } from "@/lib/html";
 
 const newsCategories = ["Tất cả", "Phát triển bền vững", "Tin tức thị trường", "Kiến thức chuyên ngành"];
 
@@ -63,7 +64,7 @@ const News = () => {
                     <div className="p-6">
                       <span className="text-xs font-semibold text-secondary uppercase tracking-wider">{news.category}</span>
                       <h3 className="mt-2 text-lg font-serif font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{news.title}</h3>
-                      <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{news.excerpt}</p>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{stripHtml(news.excerpt)}</p>
                       <div className="mt-4 flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">{new Date(news.created_at).toLocaleDateString("vi-VN")}</span>
                         <span className="text-primary text-sm font-medium">Đọc thêm →</span>
