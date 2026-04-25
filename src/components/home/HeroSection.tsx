@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import heroHome from "@/assets/hero-home.jpg";
 import logo from "@/assets/logo.png";
@@ -6,7 +7,26 @@ import { usePageSection } from "@/hooks/usePageSection";
 
 const HeroSection = () => {
   const { data } = usePageSection("home", "hero");
-  const image = data?.image_url || heroHome;
+  const images = useMemo(() => {
+    const raw = data?.image_url?.trim();
+    if (!raw) return [heroHome];
+    const list = raw
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return list.length ? list : [heroHome];
+  }, [data?.image_url]);
+
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const id = window.setInterval(() => {
+      setActive((i) => (i + 1) % images.length);
+    }, 4000);
+    return () => window.clearInterval(id);
+  }, [images.length]);
+
   const title = data?.title || "Manna Đất Vàng";
   const subtitle = data?.subtitle || "Nông nghiệp sinh học — Vì một Việt Nam xanh và bền vững";
   const description = data?.description || '"Thương hiệu uy tín quốc gia" 2025';
@@ -56,11 +76,38 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right: image */}
+          {/* Right: image slideshow */}
           <div className="relative order-first lg:order-last animate-fade-in">
             <div className="absolute inset-0 gradient-primary rounded-3xl rotate-3 opacity-20" />
-            <div className="relative rounded-3xl overflow-hidden shadow-card-hover aspect-[4/5] lg:aspect-[5/6]">
-              <img src={image} alt={title} className="w-full h-full object-cover" />
+            <div className="relative rounded-3xl overflow-hidden shadow-card-hover aspect-[4/5] lg:aspect-[5/6] bg-muted">
+              {images.map((src, idx) => (
+                <img
+                  key={`${src}-${idx}`}
+                  src={src}
+                  alt={`${title} ${idx + 1}`}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
+                    idx === active ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {images.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActive(idx)}
+                      aria-label={`Chuyển ảnh ${idx + 1}`}
+                      className={`h-1.5 rounded-full transition-all ${
+                        idx === active
+                          ? "w-6 bg-primary-foreground"
+                          : "w-1.5 bg-primary-foreground/60 hover:bg-primary-foreground/80"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

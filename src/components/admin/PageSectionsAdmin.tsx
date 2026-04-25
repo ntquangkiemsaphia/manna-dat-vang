@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ImageUpload from "./ImageUpload";
+import MultiImageUpload from "./MultiImageUpload";
 import { usePageSections, type PageSection } from "@/hooks/usePageSection";
 
 const PAGE_LABELS: Record<string, string> = {
@@ -197,10 +197,12 @@ const SectionEditor = ({ section }: { section: PageSection }) => {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Ảnh</label>
-          <ImageUpload
+          <label className="text-sm font-medium mb-1 block">
+            Ảnh {section.section === "hero" ? "(slideshow — đổi mỗi 4s)" : ""}
+          </label>
+          <MultiImageUpload
             value={form.image_url}
-            onChange={(url) => setForm({ ...form, image_url: url })}
+            onChange={(val) => setForm({ ...form, image_url: val })}
             folder={`pages/${section.page}/${section.section}`}
           />
         </div>
