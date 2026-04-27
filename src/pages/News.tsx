@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import HeroBanner from "@/components/HeroBanner";
@@ -9,9 +9,15 @@ import { stripHtml } from "@/lib/html";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 
 const News = () => {
+  const [searchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("Tất cả");
   const { data: dbCategories = [] } = useNewsCategories();
   const newsCategories = ["Tất cả", ...dbCategories.map((c) => c.name)];
+
+  useEffect(() => {
+    const cat = searchParams.get("cat");
+    if (cat) setActiveCategory(cat);
+  }, [searchParams]);
 
   const { data: allNews = [], isLoading } = useQuery({
     queryKey: ["news-posts"],
