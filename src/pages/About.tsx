@@ -33,6 +33,16 @@ const About = () => {
     {/* Story */}
     <section className="py-20">
       <div className="container">
+        {/* Title spans full width above */}
+        <div className="max-w-3xl mb-10">
+          <span className="text-sm font-semibold text-secondary uppercase tracking-wider">
+            {storyLabel}
+          </span>
+          <h2 className="mt-2 text-3xl md:text-4xl font-serif font-bold text-foreground">
+            {storyTitle}
+          </h2>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="flex flex-col gap-4">
             {displayImages.map((src, idx) => (
@@ -47,7 +57,6 @@ const About = () => {
             ))}
           </div>
           <div>
-            <SectionTitle label={storyLabel} title={storyTitle} center={false} />
             {storyDesc ? (
               <div className="space-y-4 text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
                 {storyDesc}
