@@ -208,6 +208,8 @@ const NewsAdmin = () => {
   const qc = useQueryClient();
   const [editPost, setEditPost] = useState<NewsPost | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const { data: newsCats = [] } = useNewsCategories();
 
   const { data: posts = [] } = useQuery({
     queryKey: ["admin-news"],
@@ -216,6 +218,8 @@ const NewsAdmin = () => {
       return data || [];
     },
   });
+
+  const filteredPosts = filterCategory === "all" ? posts : posts.filter((p) => p.category === filterCategory);
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
@@ -227,7 +231,22 @@ const NewsAdmin = () => {
 
   return (
     <div>
-      <div className="flex justify-end mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Lọc danh mục:</span>
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả ({posts.length})</SelectItem>
+              {newsCats.map((c) => {
+                const count = posts.filter((p) => p.category === c.name).length;
+                return (
+                  <SelectItem key={c.id} value={c.name}>{c.name} ({count})</SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) setEditPost(null); }}>
           <DialogTrigger asChild>
             <Button className="gradient-primary text-primary-foreground border-0"><Plus className="w-4 h-4 mr-1" /> Thêm bài viết</Button>
@@ -248,7 +267,7 @@ const NewsAdmin = () => {
             <th className="text-right p-3 font-medium">Thao tác</th>
           </tr></thead>
           <tbody>
-            {posts.map((p) => (
+            {filteredPosts.map((p) => (
               <tr key={p.id} className="border-b border-border last:border-0">
                 <td className="p-3 font-medium line-clamp-1">{p.title}</td>
                 <td className="p-3 hidden md:table-cell text-muted-foreground">{p.category}</td>
@@ -263,6 +282,9 @@ const NewsAdmin = () => {
                 </td>
               </tr>
             ))}
+            {filteredPosts.length === 0 && (
+              <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Không có bài viết nào</td></tr>
+            )}
           </tbody>
         </table>
       </div>
