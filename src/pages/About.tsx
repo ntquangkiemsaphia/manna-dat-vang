@@ -53,6 +53,7 @@ const About = () => {
       {/* Story */}
       <section className="py-20">
         <div className="container">
+          <SectionTitle label={storyLabel} title={storyTitle} center={false} />
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="rounded-2xl overflow-hidden shadow-card">
               <img
@@ -64,7 +65,6 @@ const About = () => {
               />
             </div>
             <div>
-              <SectionTitle label={storyLabel} title={storyTitle} center={false} />
               {storyDesc ? (
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
                   {storyDesc}
