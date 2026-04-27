@@ -38,9 +38,20 @@ const ProductsOverview = () => {
                 const Icon = iconMap[cat.slug] || Package;
                 return (
                   <Link key={cat.slug} to={`/san-pham/${cat.slug}`} className="group bg-card rounded-2xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
-                    <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6">
-                      <Icon className="w-7 h-7 text-primary-foreground" />
-                    </div>
+                    {cat.image_url ? (
+                      <div className="w-full aspect-[4/3] rounded-xl overflow-hidden mb-6 bg-muted">
+                        <img
+                          src={cat.image_url}
+                          alt={cat.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6">
+                        <Icon className="w-7 h-7 text-primary-foreground" />
+                      </div>
+                    )}
                     <h3 className="text-xl font-serif font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">{cat.name}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-4">{cat.description}</p>
                     <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
