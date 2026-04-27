@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePageSection } from "@/hooks/usePageSection";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 interface HeroBannerProps {
   image: string;
@@ -14,14 +15,18 @@ interface HeroBannerProps {
 }
 
 const HeroBanner = ({ image, title, subtitle, ctaText, ctaLink, compact, page }: HeroBannerProps) => {
-  const { data } = usePageSection(page || "", "hero");
+  const { data, isLoading, isFetched } = usePageSection(page || "", "hero");
   // Use first image from image_url (which may be newline/comma separated)
   const dbImage =
     data?.image_url
       ?.split(/[\n,]+/)
       .map((s) => s.trim())
       .filter(Boolean)[0] || "";
-  const finalImage = dbImage || image;
+  // Khi page có cấu hình DB: chờ query xong rồi mới quyết định ảnh
+  // (tránh nháy ảnh tĩnh trong khi đang tải)
+  const hasPage = !!page;
+  const waiting = hasPage && isLoading && !isFetched;
+  const finalImage = waiting ? "" : dbImage || image;
   const finalTitle = data?.title?.trim() || title;
   const finalSubtitle = data?.subtitle?.trim() || subtitle;
   const finalCtaText = data?.cta_text?.trim() || ctaText;
@@ -29,7 +34,17 @@ const HeroBanner = ({ image, title, subtitle, ctaText, ctaLink, compact, page }:
 
   return (
   <section className={`relative ${compact ? "h-[300px] md:h-[400px]" : "h-[500px] md:h-[650px]"} overflow-hidden`}>
-    <img src={finalImage} alt={finalTitle} className="absolute inset-0 w-full h-full object-cover" />
+    {finalImage ? (
+      <img
+        src={getOptimizedImageUrl(finalImage, { width: 1920, quality: 75 })}
+        alt={finalTitle}
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        decoding="async"
+      />
+    ) : (
+      <div className="absolute inset-0 bg-muted animate-pulse" />
+    )}
     <div className="absolute inset-0 hero-overlay" />
     <div className="relative h-full container flex flex-col justify-center items-start text-primary-foreground">
       <h1 className={`font-serif font-bold max-w-2xl leading-tight animate-fade-up ${compact ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl lg:text-6xl"}`}>
