@@ -13,12 +13,6 @@ const categoryIcons: Record<string, typeof Leaf> = {
   "thuy-san": Fish,
 };
 
-const categoryNames: Record<string, string> = {
-  "phan-bon": "Phân bón sinh học",
-  "chan-nuoi": "Chăn nuôi",
-  "thuy-san": "Thủy sản",
-};
-
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -34,6 +28,19 @@ const ProductDetail = () => {
       return data;
     },
     enabled: !!id,
+  });
+
+  const { data: categoryInfo } = useQuery({
+    queryKey: ["product-category-info", product?.category],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("product_categories")
+        .select("name, slug")
+        .eq("slug", product!.category)
+        .maybeSingle();
+      return data as { name: string; slug: string } | null;
+    },
+    enabled: !!product?.category,
   });
 
   if (isLoading) {
@@ -60,7 +67,7 @@ const ProductDetail = () => {
   }
 
   const Icon = categoryIcons[product.category] || Leaf;
-  const catName = categoryNames[product.category] || product.category;
+  const catName = categoryInfo?.name || product.category;
 
   return (
     <Layout>
