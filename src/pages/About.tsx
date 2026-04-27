@@ -4,6 +4,7 @@ import SectionTitle from "@/components/SectionTitle";
 import heroAbout from "@/assets/hero-about.jpg";
 import aboutStory from "@/assets/about-story.jpg";
 import { Eye, Target, Heart, Cpu } from "lucide-react";
+import { usePageSection } from "@/hooks/usePageSection";
 
 const values = [
   { icon: Cpu, title: "Công nghệ", desc: "Lấy khoa học và công nghệ sinh học làm nền tảng cốt lõi, đảm bảo chất lượng sản phẩm tối ưu." },
@@ -12,7 +13,19 @@ const values = [
   { icon: Heart, title: "Tình yêu thương", desc: "Yêu thương thiên nhiên, con người và quê hương. Bảo vệ sức khỏe cộng đồng và môi trường." },
 ];
 
-const About = () => (
+const About = () => {
+  const { data: story } = usePageSection("about", "story");
+  const storyImage =
+    story?.image_url
+      ?.split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)[0] || aboutStory;
+  const storyLabel = story?.title?.trim() || "Câu chuyện của chúng tôi";
+  const storyTitle =
+    story?.subtitle?.trim() || "Từ rừng thuốc Việt Nam đến nông nghiệp bền vững";
+  const storyDesc = story?.description?.trim();
+
+  return (
   <Layout>
     <HeroBanner page="about" image={heroAbout} title="Về Manna Đất Vàng" subtitle="Hành trình 30 năm nghiên cứu và phát triển nông nghiệp sinh học Việt Nam" compact />
 
@@ -21,19 +34,25 @@ const About = () => (
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="rounded-2xl overflow-hidden shadow-card">
-            <img src={aboutStory} alt="Câu chuyện thương hiệu" className="w-full h-[450px] object-cover" loading="lazy" width={800} height={600} />
+            <img src={storyImage} alt={storyTitle} className="w-full h-[450px] object-cover" loading="lazy" width={800} height={600} />
           </div>
           <div>
-            <SectionTitle label="Câu chuyện của chúng tôi" title="Từ rừng thuốc Việt Nam đến nông nghiệp bền vững" center={false} />
-            <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
-              <p>Xuất phát từ niềm đam mê với cây thảo dược Việt Nam, Nhà khoa học Nguyễn Phương Dung đã dành trọn tuổi thanh xuân để nghiên cứu và ứng dụng giá trị của "rừng thuốc" quê hương.</p>
-              <p>Năm 1993, bà thành lập Công ty TNHH Thành Phương, chuyên nghiên cứu các sản phẩm bảo vệ thực vật từ tinh dầu và hợp chất kháng sinh thực vật từ cây dược liệu.</p>
-              <p>Sau khi du học tại Mỹ, bà quyết định từ bỏ cơ hội định cư để trở về Việt Nam cống hiến. Câu nói của vị giáo sư người Mỹ đã thay đổi cuộc đời bà:</p>
-              <blockquote className="border-l-4 border-primary pl-4 italic text-foreground font-medium">
-                "Người Việt sống trên một rừng thuốc, nhưng cũng chết trên một rừng thuốc. Chị là người Việt Nam, hãy làm giàu trên mảnh đất quê hương của mình."
-              </blockquote>
-              <p>Năm 2021, bà thành lập Công ty Cổ phần Manna Đất Vàng với trọng tâm nghiên cứu và phát triển sản phẩm phục vụ nông nghiệp sạch.</p>
-            </div>
+            <SectionTitle label={storyLabel} title={storyTitle} center={false} />
+            {storyDesc ? (
+              <div className="space-y-4 text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
+                {storyDesc}
+              </div>
+            ) : (
+              <div className="space-y-4 text-muted-foreground leading-relaxed text-sm">
+                <p>Xuất phát từ niềm đam mê với cây thảo dược Việt Nam, Nhà khoa học Nguyễn Phương Dung đã dành trọn tuổi thanh xuân để nghiên cứu và ứng dụng giá trị của "rừng thuốc" quê hương.</p>
+                <p>Năm 1993, bà thành lập Công ty TNHH Thành Phương, chuyên nghiên cứu các sản phẩm bảo vệ thực vật từ tinh dầu và hợp chất kháng sinh thực vật từ cây dược liệu.</p>
+                <p>Sau khi du học tại Mỹ, bà quyết định từ bỏ cơ hội định cư để trở về Việt Nam cống hiến. Câu nói của vị giáo sư người Mỹ đã thay đổi cuộc đời bà:</p>
+                <blockquote className="border-l-4 border-primary pl-4 italic text-foreground font-medium">
+                  "Người Việt sống trên một rừng thuốc, nhưng cũng chết trên một rừng thuốc. Chị là người Việt Nam, hãy làm giàu trên mảnh đất quê hương của mình."
+                </blockquote>
+                <p>Năm 2021, bà thành lập Công ty Cổ phần Manna Đất Vàng với trọng tâm nghiên cứu và phát triển sản phẩm phục vụ nông nghiệp sạch.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
