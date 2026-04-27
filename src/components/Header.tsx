@@ -22,6 +22,17 @@ const Header = () => {
     },
   });
 
+  const { data: newsCats = [] } = useQuery({
+    queryKey: ["news-categories", "header"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("news_categories")
+        .select("name")
+        .order("created_at");
+      return (data as { name: string }[]) || [];
+    },
+  });
+
   const navItems = [
     { label: "Trang chủ", path: "/" },
     {
@@ -32,7 +43,10 @@ const Header = () => {
       label: "Sản phẩm", path: "/san-pham",
       children: productCats.map((c) => ({ label: c.name, path: `/san-pham/${c.slug}` })),
     },
-    { label: "Tin tức", path: "/tin-tuc" },
+    {
+      label: "Tin tức", path: "/tin-tuc",
+      children: newsCats.map((c) => ({ label: c.name, path: `/tin-tuc?cat=${encodeURIComponent(c.name)}` })),
+    },
     { label: "Liên hệ", path: "/lien-he" },
   ];
 
