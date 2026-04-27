@@ -15,11 +15,12 @@ const values = [
 
 const About = () => {
   const { data: story } = usePageSection("about", "story");
-  const storyImage =
+  const storyImages =
     story?.image_url
       ?.split(/[\n,]+/)
       .map((s) => s.trim())
-      .filter(Boolean)[0] || aboutStory;
+      .filter(Boolean) || [];
+  const displayImages = storyImages.length > 0 ? storyImages : [aboutStory];
   const storyLabel = story?.title?.trim() || "Câu chuyện của chúng tôi";
   const storyTitle =
     story?.subtitle?.trim() || "Từ rừng thuốc Việt Nam đến nông nghiệp bền vững";
@@ -32,9 +33,18 @@ const About = () => {
     {/* Story */}
     <section className="py-20">
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="rounded-2xl overflow-hidden shadow-card">
-            <img src={storyImage} alt={storyTitle} className="w-full h-[450px] object-cover" loading="lazy" width={800} height={600} />
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="flex flex-col gap-4">
+            {displayImages.map((src, idx) => (
+              <div key={idx} className="rounded-2xl overflow-hidden shadow-card bg-muted">
+                <img
+                  src={src}
+                  alt={`${storyTitle} ${idx + 1}`}
+                  className={`w-full ${displayImages.length === 1 ? "h-[450px] object-cover" : "h-auto object-contain"}`}
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
           <div>
             <SectionTitle label={storyLabel} title={storyTitle} center={false} />
