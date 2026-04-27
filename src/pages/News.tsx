@@ -6,11 +6,12 @@ import HeroBanner from "@/components/HeroBanner";
 import { supabase } from "@/integrations/supabase/client";
 import heroHome from "@/assets/hero-home.jpg";
 import { stripHtml } from "@/lib/html";
-
-const newsCategories = ["Tất cả", "Phát triển bền vững", "Tin tức thị trường", "Kiến thức chuyên ngành"];
+import { useNewsCategories } from "@/hooks/useNewsCategories";
 
 const News = () => {
   const [activeCategory, setActiveCategory] = useState("Tất cả");
+  const { data: dbCategories = [] } = useNewsCategories();
+  const newsCategories = ["Tất cả", ...dbCategories.map((c) => c.name)];
 
   const { data: allNews = [], isLoading } = useQuery({
     queryKey: ["news-posts"],
