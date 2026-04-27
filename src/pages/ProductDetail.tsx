@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import heroProducts from "@/assets/hero-products.jpg";
 import { Leaf, FlaskConical, Fish, Phone, ArrowLeft } from "lucide-react";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const categoryIcons: Record<string, typeof Leaf> = {
   "phan-bon": Leaf,
@@ -81,7 +82,13 @@ const ProductDetail = () => {
           <div className="grid md:grid-cols-2 gap-12">
             <div className="bg-accent rounded-2xl h-80 flex items-center justify-center">
               {product.image_url ? (
-                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-2xl" />
+                <img
+                  src={getOptimizedImageUrl(product.image_url, { width: 1000, quality: 80 })}
+                  alt={product.name}
+                  className="w-full h-full object-cover rounded-2xl"
+                  loading="lazy"
+                  decoding="async"
+                />
               ) : (
                 <Icon className="w-24 h-24 text-primary opacity-30" />
               )}

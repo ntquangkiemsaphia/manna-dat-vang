@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import heroHome from "@/assets/hero-home.jpg";
 import { stripHtml } from "@/lib/html";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const News = () => {
   const [searchParams] = useSearchParams();
@@ -63,9 +64,11 @@ const News = () => {
 
                     {/* Ảnh full card */}
                     <img
-                      src={news.image_url}
+                      src={getOptimizedImageUrl(news.image_url, { width: 800, quality: 75 })}
                       alt={news.title}
                       className="absolute inset-0 w-full h-1/2 object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="h-1/2 gradient-primary opacity-20" />
                     <div className="p-6">

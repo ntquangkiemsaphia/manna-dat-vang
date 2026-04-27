@@ -90,7 +90,13 @@ const NewsDetail = () => {
             )}
 
             {post.image_url && (
-              <img src={post.image_url} alt={post.title} className="w-full h-80 object-cover rounded-2xl mb-8" />
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full h-80 object-cover rounded-2xl mb-8"
+                loading="lazy"
+                decoding="async"
+              />
             )}
 
             <div
