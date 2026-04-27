@@ -2,9 +2,9 @@ import Layout from "@/components/Layout";
 import HeroBanner from "@/components/HeroBanner";
 import SectionTitle from "@/components/SectionTitle";
 import heroAbout from "@/assets/hero-about.jpg";
-import aboutStory from "@/assets/about-story.jpg";
 import { Eye, Target, Heart, Cpu } from "lucide-react";
 import { usePageSection } from "@/hooks/usePageSection";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const values = [
   { icon: Cpu, title: "Công nghệ", desc: "Lấy khoa học và công nghệ sinh học làm nền tảng cốt lõi, đảm bảo chất lượng sản phẩm tối ưu." },
@@ -14,13 +14,14 @@ const values = [
 ];
 
 const About = () => {
-  const { data: story } = usePageSection("about", "story");
+  const { data: story, isLoading, isFetched } = usePageSection("about", "story");
   const storyImages =
     story?.image_url
       ?.split(/[\n,]+/)
       .map((s) => s.trim())
       .filter(Boolean) || [];
-  const displayImages = storyImages.length > 0 ? storyImages : [aboutStory];
+  const waiting = isLoading && !isFetched;
+  const displayImages = storyImages;
   const storyLabel = story?.title?.trim() || "Câu chuyện của chúng tôi";
   const storyTitle =
     story?.subtitle?.trim() || "Từ rừng thuốc Việt Nam đến nông nghiệp bền vững";
@@ -45,13 +46,17 @@ const About = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="flex flex-col gap-4">
-            {displayImages.map((src, idx) => (
+            {waiting && (
+              <div className="rounded-2xl bg-muted animate-pulse h-[450px]" />
+            )}
+            {!waiting && displayImages.map((src, idx) => (
               <div key={idx} className="rounded-2xl overflow-hidden shadow-card bg-muted">
                 <img
-                  src={src}
+                  src={getOptimizedImageUrl(src, { width: 1200, quality: 78 })}
                   alt={`${storyTitle} ${idx + 1}`}
                   className={`w-full ${displayImages.length === 1 ? "h-[450px] object-cover" : "h-auto object-contain"}`}
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
             ))}

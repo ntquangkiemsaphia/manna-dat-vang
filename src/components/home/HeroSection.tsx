@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import heroHome from "@/assets/hero-home.jpg";
 import logo from "@/assets/logo.png";
 import { usePageSection } from "@/hooks/usePageSection";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const HeroSection = () => {
-  const { data } = usePageSection("home", "hero");
+  const { data, isLoading, isFetched } = usePageSection("home", "hero");
   const images = useMemo(() => {
     const raw = data?.image_url?.trim();
-    if (!raw) return [heroHome];
-    const list = raw
+    if (!raw) return [] as string[];
+    return raw
       .split(/[\n,]+/)
       .map((s) => s.trim())
       .filter(Boolean);
-    return list.length ? list : [heroHome];
   }, [data?.image_url]);
+  const waiting = isLoading && !isFetched;
 
   const [active, setActive] = useState(0);
 
@@ -80,12 +80,16 @@ const HeroSection = () => {
           <div className="relative order-first lg:order-last animate-fade-in">
             <div className="absolute inset-0 gradient-primary rounded-3xl rotate-3 opacity-20" />
             <div className="relative rounded-3xl overflow-hidden shadow-card-hover aspect-[4/5] lg:aspect-[5/6] bg-muted">
+              {waiting && (
+                <div className="absolute inset-0 bg-muted animate-pulse" />
+              )}
               {images.map((src, idx) => (
                 <img
                   key={`${src}-${idx}`}
-                  src={src}
+                  src={getOptimizedImageUrl(src, { width: 1280, quality: 78 })}
                   alt={`${title} ${idx + 1}`}
                   loading={idx === 0 ? "eager" : "lazy"}
+                  decoding="async"
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
                     idx === active ? "opacity-100" : "opacity-0"
                   }`}

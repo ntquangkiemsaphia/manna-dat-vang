@@ -1,19 +1,23 @@
 import { useState } from "react";
-import journeyBg from "@/assets/journey-bg.jpg";
 import { useJourneyMilestones } from "@/hooks/useJourneyMilestones";
 import { usePageSection } from "@/hooks/usePageSection";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const JourneySection = () => {
   const { data: milestones = [] } = useJourneyMilestones();
-  const { data: section } = usePageSection("home", "journey");
+  const { data: section, isLoading, isFetched } = usePageSection("home", "journey");
   const [active, setActive] = useState(0);
 
   const safeActive = Math.min(active, Math.max(milestones.length - 1, 0));
   const current = milestones[safeActive];
 
   // Lấy ảnh đầu tiên từ setting (hỗ trợ nhiều ảnh ngăn cách \n)
-  const bgFromSettings = section?.image_url?.split("\n").map((s) => s.trim()).filter(Boolean)[0];
-  const bgImage = bgFromSettings || journeyBg;
+  const bgFromSettings = section?.image_url
+    ?.split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean)[0];
+  const waiting = isLoading && !isFetched;
+  const bgImage = bgFromSettings || "";
   const heading = section?.title || "Hành trình của";
   const subheading = section?.subtitle || "Manna Đất Vàng";
   const intro =
@@ -22,12 +26,17 @@ const JourneySection = () => {
 
   return (
     <section className="relative py-24 overflow-hidden">
-      <img
-        src={bgImage}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-        loading="lazy"
-      />
+      {bgImage && !waiting ? (
+        <img
+          src={getOptimizedImageUrl(bgImage, { width: 1920, quality: 70 })}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-[hsl(224,60%,12%)]" />
+      )}
       <div className="absolute inset-0 bg-[hsl(224,60%,12%)]/85" />
       <div className="relative container text-center text-white">
         <h2 className="font-serif text-3xl md:text-4xl font-bold mb-2">{heading}</h2>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { compressImage } from "@/lib/image";
 
 interface ImageUploadProps {
   value: string;
@@ -16,7 +17,7 @@ const ImageUpload = ({ value, onChange, folder = "images" }: ImageUploadProps) =
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    let file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -24,12 +25,25 @@ const ImageUpload = ({ value, onChange, folder = "images" }: ImageUploadProps) =
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Ảnh không được vượt quá 5MB");
+    setUploading(true);
+    const originalSize = file.size;
+    try {
+      file = await compressImage(file);
+      if (file.size < originalSize) {
+        const before = (originalSize / 1024 / 1024).toFixed(2);
+        const after = (file.size / 1024 / 1024).toFixed(2);
+        toast.message(`Đã nén ảnh ${before}MB → ${after}MB`);
+      }
+    } catch {
+      // Bỏ qua, dùng file gốc
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Ảnh quá lớn (>10MB sau khi nén). Vui lòng chọn ảnh khác.");
+      setUploading(false);
       return;
     }
 
-    setUploading(true);
     const ext = file.name.split(".").pop();
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 

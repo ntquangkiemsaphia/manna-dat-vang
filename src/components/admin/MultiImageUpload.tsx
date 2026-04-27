@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, X, Loader2, GripVertical } from "lucide-react";
 import { toast } from "sonner";
+import { compressImage } from "@/lib/image";
 
 interface MultiImageUploadProps {
   value: string; // newline-separated URLs
@@ -30,15 +31,24 @@ const MultiImageUpload = ({ value, onChange, folder = "images" }: MultiImageUplo
     if (!files || files.length === 0) return;
     setUploading(true);
     const added: string[] = [];
+    let compressedCount = 0;
     for (const file of Array.from(files)) {
       if (!file.type.startsWith("image/")) continue;
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name}: vượt quá 5MB`);
+      const originalSize = file.size;
+      let processed = file;
+      try {
+        processed = await compressImage(file);
+        if (processed.size < originalSize) compressedCount++;
+      } catch {
+        processed = file;
+      }
+      if (processed.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name}: quá lớn (>10MB sau khi nén)`);
         continue;
       }
-      const ext = file.name.split(".").pop();
+      const ext = processed.name.split(".").pop();
       const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("uploads").upload(fileName, file);
+      const { error } = await supabase.storage.from("uploads").upload(fileName, processed);
       if (error) {
         toast.error("Lỗi tải ảnh: " + error.message);
         continue;
@@ -48,7 +58,11 @@ const MultiImageUpload = ({ value, onChange, folder = "images" }: MultiImageUplo
     }
     if (added.length) {
       setUrls([...urls, ...added]);
-      toast.success(`Đã tải ${added.length} ảnh`);
+      toast.success(
+        compressedCount > 0
+          ? `Đã tải ${added.length} ảnh (đã nén ${compressedCount} ảnh lớn)`
+          : `Đã tải ${added.length} ảnh`
+      );
     }
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
