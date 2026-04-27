@@ -83,7 +83,7 @@ const Header = () => {
               >
                 {item.label}
               </Link>
-              {item.children && hoveredItem === item.label && (
+              {item.children && item.children.length > 0 && hoveredItem === item.label && (
                 <div className="absolute top-full left-0 mt-1 w-56 bg-card border border-border rounded-lg shadow-lg py-2 animate-fade-in" style={{ animationDuration: "0.2s" }}>
                   {item.children.map((child) => (
                     <Link
