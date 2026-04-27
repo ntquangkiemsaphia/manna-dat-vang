@@ -1,6 +1,6 @@
 const stats = [
-  { value: "30+", label: "Năm nghiên cứu, thử nghiệm & ứng dụng" },
-  { value: "50+", label: "Sản phẩm sinh học" },
+  { value: "20+", label: "Năm nghiên cứu, thử nghiệm & ứng dụng" },
+  { value: "10+", label: "Sản phẩm sinh học" },
   { value: "10,000+", label: "Nông dân tin dùng" },
   { value: "20+", label: "Tỉnh thành phủ sóng" },
 ];
