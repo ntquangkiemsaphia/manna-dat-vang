@@ -2,30 +2,39 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Phone, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.png";
-
-const navItems = [
-  { label: "Trang chủ", path: "/" },
-  {
-    label: "Giới thiệu", path: "/gioi-thieu",
-    children: [{ label: "Về chúng tôi", path: "/gioi-thieu" }],
-  },
-  {
-    label: "Sản phẩm", path: "/san-pham",
-    children: [
-      { label: "Phân bón sinh học", path: "/san-pham/phan-bon" },
-      { label: "Chăn nuôi", path: "/san-pham/chan-nuoi" },
-      { label: "Thủy sản", path: "/san-pham/thuy-san" },
-    ],
-  },
-  { label: "Tin tức", path: "/tin-tuc" },
-  { label: "Liên hệ", path: "/lien-he" },
-];
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const location = useLocation();
+
+  const { data: productCats = [] } = useQuery({
+    queryKey: ["product-categories", "header"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("product_categories")
+        .select("name, slug")
+        .order("created_at");
+      return (data as { name: string; slug: string }[]) || [];
+    },
+  });
+
+  const navItems = [
+    { label: "Trang chủ", path: "/" },
+    {
+      label: "Giới thiệu", path: "/gioi-thieu",
+      children: [{ label: "Về chúng tôi", path: "/gioi-thieu" }],
+    },
+    {
+      label: "Sản phẩm", path: "/san-pham",
+      children: productCats.map((c) => ({ label: c.name, path: `/san-pham/${c.slug}` })),
+    },
+    { label: "Tin tức", path: "/tin-tuc" },
+    { label: "Liên hệ", path: "/lien-he" },
+  ];
 
   const isActive = (path: string) => location.pathname === path || (path !== "/" && location.pathname.startsWith(path + "/"));
 
@@ -74,7 +83,7 @@ const Header = () => {
               >
                 {item.label}
               </Link>
-              {item.children && hoveredItem === item.label && (
+              {item.children && item.children.length > 0 && hoveredItem === item.label && (
                 <div className="absolute top-full left-0 mt-1 w-56 bg-card border border-border rounded-lg shadow-lg py-2 animate-fade-in" style={{ animationDuration: "0.2s" }}>
                   {item.children.map((child) => (
                     <Link
