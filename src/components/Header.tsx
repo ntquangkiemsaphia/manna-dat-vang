@@ -37,7 +37,10 @@ const Header = () => {
     { label: "Trang chủ", path: "/" },
     {
       label: "Giới thiệu", path: "/gioi-thieu",
-      children: [{ label: "Về chúng tôi", path: "/gioi-thieu" }],
+      children: [
+        { label: "Về chúng tôi", path: "/gioi-thieu" },
+        { label: "Catalog", path: "/catalog" },
+      ],
     },
     {
       label: "Sản phẩm", path: "/san-pham",
