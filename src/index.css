@@ -201,3 +201,119 @@
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
+
+/* === About page rich content === */
+.about-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: hsl(var(--foreground));
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+.about-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 2.4vw, 1.875rem);
+  font-weight: 700;
+  color: hsl(var(--primary));
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid hsl(var(--primary) / 0.15);
+}
+.about-content h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(var(--secondary));
+  margin: 1.75rem 0 0.75rem;
+}
+.about-content p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: hsl(var(--muted-foreground));
+  margin: 0 0 1rem;
+}
+.about-content strong { color: hsl(var(--foreground)); font-weight: 600; }
+.about-content em { font-style: italic; }
+.about-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 0 0 1rem;
+  color: hsl(var(--muted-foreground));
+}
+.about-content ul ul { list-style: circle; margin-top: 0.5rem; }
+.about-content li { margin-bottom: 0.5rem; line-height: 1.7; }
+.about-content blockquote {
+  border-left: 4px solid hsl(var(--primary));
+  padding: 0.75rem 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: hsl(var(--foreground));
+  background: hsl(var(--primary) / 0.05);
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 1.05rem;
+}
+.about-content figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+.about-content figure img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -12px hsl(var(--primary) / 0.25);
+  display: block;
+  margin: 0 auto;
+}
+.about-content figure img[src=""],
+.about-content figure img:not([src]) {
+  min-height: 280px;
+  background: repeating-linear-gradient(
+    45deg,
+    hsl(var(--muted)),
+    hsl(var(--muted)) 10px,
+    hsl(var(--muted) / 0.6) 10px,
+    hsl(var(--muted) / 0.6) 20px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.about-content figure img[src=""]::after,
+.about-content figure img:not([src])::after {
+  content: "Ảnh sẽ được cập nhật";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  font-style: italic;
+}
+.about-content figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+.about-content img:not(figure img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1.5rem auto;
+  display: block;
+}
+.about-content hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 2.5rem 0;
+}
+.about-content a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
