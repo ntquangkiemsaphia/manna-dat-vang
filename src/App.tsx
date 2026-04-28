@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Catalog from "./pages/Catalog";
 import { ProductsOverview, ProductCategory } from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import News from "./pages/News";
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/gioi-thieu" element={<About />} />
+        <Route path="/catalog" element={<Catalog />} />
             <Route path="/san-pham" element={<ProductsOverview />} />
             <Route path="/san-pham/:category" element={<ProductCategory />} />
             <Route path="/san-pham/chi-tiet/:id" element={<ProductDetail />} />
