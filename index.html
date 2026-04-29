@@ -22,7 +22,15 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8faf7;font-family:system-ui,-apple-system,sans-serif;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+          <div style="width:40px;height:40px;border:3px solid rgba(34,94,52,0.2);border-top-color:#225e34;border-radius:50%;animation:lvspin 0.8s linear infinite;"></div>
+          <div style="color:#225e34;font-size:14px;font-weight:500;">Đang tải Manna Đất Vàng...</div>
+        </div>
+      </div>
+      <style>@keyframes lvspin{to{transform:rotate(360deg)}}</style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
