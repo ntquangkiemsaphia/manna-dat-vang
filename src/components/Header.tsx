@@ -20,6 +20,8 @@ const Header = () => {
         .order("created_at");
       return (data as { name: string; slug: string }[]) || [];
     },
+    enabled: mobileOpen || hoveredItem === "Sản phẩm",
+    staleTime: 5 * 60_000,
   });
 
   const { data: newsCats = [] } = useQuery({
@@ -31,6 +33,8 @@ const Header = () => {
         .order("created_at");
       return (data as { name: string }[]) || [];
     },
+    enabled: mobileOpen || hoveredItem === "Tin tức",
+    staleTime: 5 * 60_000,
   });
 
   const navItems = [
