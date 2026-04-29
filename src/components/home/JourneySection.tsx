@@ -56,7 +56,7 @@ const JourneySection = () => {
             {current.image_url ? (
               <div className="mx-auto mb-5 w-40 h-40 rounded-full overflow-hidden border-4 border-secondary/60 shadow-2xl ring-4 ring-secondary/20">
                 <img
-                  src={current.image_url}
+                  src={getOptimizedImageUrl(current.image_url, { width: 360, quality: 75 })}
                   alt={current.title}
                   className="w-full h-full object-cover"
                 />
