@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { getOptimizedImageUrl } from "@/lib/image";
 
 const XIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -20,6 +19,15 @@ const PatentsSection = () => {
   });
   const [selected, setSelected] = useState(0);
   const [zoomed, setZoomed] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (zoomed === null) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setZoomed(null);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [zoomed]);
 
   if (patents.length === 0) return null;
 
@@ -57,10 +65,15 @@ const PatentsSection = () => {
         </div>
       </div>
 
-      <Dialog open={zoomed !== null} onOpenChange={(o) => !o && setZoomed(null)}>
-        <DialogContent className="max-w-4xl bg-transparent border-0 shadow-none p-0 [&>button]:hidden">
-          {zoomed !== null && patents[zoomed] && (
-            <div className="relative animate-scale-in">
+      {zoomed !== null && patents[zoomed] && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={patents[zoomed].title}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setZoomed(null)}
+        >
+          <div className="relative w-full max-w-4xl animate-scale-in" onClick={(event) => event.stopPropagation()}>
               <button
                 type="button"
                 onClick={() => setZoomed(null)}
@@ -86,10 +99,9 @@ const PatentsSection = () => {
                   <p className="mt-1 text-white/80 text-sm max-w-2xl mx-auto">{patents[zoomed].description}</p>
                 )}
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
