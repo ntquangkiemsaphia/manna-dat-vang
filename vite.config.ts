@@ -32,7 +32,6 @@ export default defineConfig(({ mode }) => ({
             "@tiptap/starter-kit",
             "@tiptap/extension-image",
             "@tiptap/extension-link",
-            "@tiptap/pm",
           ],
         },
       },
