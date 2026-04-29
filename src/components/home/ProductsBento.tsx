@@ -1,16 +1,18 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SectionTitle from "@/components/SectionTitle";
 import { getOptimizedImageUrl } from "@/lib/image";
 
-const PackageIcon = ({ className = "w-16 h-16" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+const PackageIcon = forwardRef<SVGSVGElement, { className?: string }>(({ className = "w-16 h-16" }, ref) => (
+  <svg ref={ref} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
     <path d="m21 8-9-5-9 5 9 5 9-5z" />
     <path d="M3 8v8l9 5 9-5V8" />
     <path d="M12 13v8" />
   </svg>
-);
+));
+PackageIcon.displayName = "PackageIcon";
 
 const ProductsBento = () => {
   const { data: products = [], isLoading } = useQuery({

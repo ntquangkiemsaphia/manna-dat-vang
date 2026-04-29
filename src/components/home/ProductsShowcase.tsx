@@ -1,21 +1,24 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SectionTitle from "@/components/SectionTitle";
 import { getOptimizedImageUrl } from "@/lib/image";
 
-const Icon = ({ className = "w-7 h-7" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+const Icon = forwardRef<SVGSVGElement, { className?: string }>(({ className = "w-7 h-7" }, ref) => (
+  <svg ref={ref} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
     <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z" />
     <path d="M12 10v12" />
   </svg>
-);
+));
+Icon.displayName = "Icon";
 
-const ArrowRight = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+const ArrowRight = forwardRef<SVGSVGElement, { className?: string }>(({ className = "w-4 h-4" }, ref) => (
+  <svg ref={ref} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
     <path d="M5 12h14M13 5l7 7-7 7" />
   </svg>
-);
+));
+ArrowRight.displayName = "ArrowRight";
 
 const ProductsShowcase = () => {
   const { data: categories = [] } = useQuery({
