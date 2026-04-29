@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SectionTitle from "@/components/SectionTitle";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const PartnersSection = () => {
   const { data: partners = [] } = useQuery({
@@ -27,7 +28,7 @@ const PartnersSection = () => {
             <div key={`${p.id}-${i}`} className="flex items-center justify-center shrink-0 min-w-[160px]">
               {p.logo_url ? (
                 <img
-                  src={p.logo_url}
+                  src={getOptimizedImageUrl(p.logo_url, { width: 320, quality: 75 })}
                   alt={p.name}
                   className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
                   loading="lazy"
