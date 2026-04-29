@@ -2,11 +2,32 @@ import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { usePageSection } from "@/hooks/usePageSection";
 import { getOptimizedImageUrl } from "@/lib/image";
+import { useQuery } from "@tanstack/react-query";
+
+type HeroData = {
+  title?: string | null;
+  subtitle?: string | null;
+  description?: string | null;
+  cta_text?: string | null;
+  cta_link?: string | null;
+  image_url?: string | null;
+};
 
 const HeroSection = () => {
-  const { data, isLoading, isFetched } = usePageSection("home", "hero");
+  const { data, isLoading, isFetched } = useQuery({
+    queryKey: ["page_sections", "home", "hero"],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase
+        .from("page_sections")
+        .select("title, subtitle, description, cta_text, cta_link, image_url")
+        .eq("page", "home")
+        .eq("section", "hero")
+        .maybeSingle();
+      return (data || null) as HeroData | null;
+    },
+  });
   const images = useMemo(() => {
     const raw = data?.image_url?.trim();
     if (!raw) return [] as string[];
