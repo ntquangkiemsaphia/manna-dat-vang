@@ -10,7 +10,12 @@ import Index from "./pages/Index";
 // Lazy-load các route ít dùng / nặng để giảm bundle ban đầu
 const About = lazy(() => import("./pages/About"));
 const Catalog = lazy(() => import("./pages/Catalog"));
-const Products = lazy(() => import("./pages/Products"));
+const ProductsOverview = lazy(() =>
+  import("./pages/Products").then((m) => ({ default: m.ProductsOverview }))
+);
+const ProductCategory = lazy(() =>
+  import("./pages/Products").then((m) => ({ default: m.ProductCategory }))
+);
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const News = lazy(() => import("./pages/News"));
 const NewsDetail = lazy(() => import("./pages/NewsDetail"));
@@ -47,8 +52,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/gioi-thieu" element={<About />} />
               <Route path="/catalog" element={<Catalog />} />
-              <Route path="/san-pham" element={<Products.Overview />} />
-              <Route path="/san-pham/:category" element={<Products.Category />} />
+              <Route path="/san-pham" element={<ProductsOverview />} />
+              <Route path="/san-pham/:category" element={<ProductCategory />} />
               <Route path="/san-pham/chi-tiet/:id" element={<ProductDetail />} />
               <Route path="/tin-tuc" element={<News />} />
               <Route path="/tin-tuc/:id" element={<NewsDetail />} />
