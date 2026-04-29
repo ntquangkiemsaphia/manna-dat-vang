@@ -32,26 +32,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    let initialized = false;
+    let lastCheckedUserId: string | null = null;
+
+    const handleSession = (s: Session | null) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      const uid = s?.user?.id ?? null;
+      if (uid && uid !== lastCheckedUserId) {
+        lastCheckedUserId = uid;
+        // defer to tránh deadlock với onAuthStateChange
+        setTimeout(() => checkAdmin(uid), 0);
+      } else if (!uid) {
+        lastCheckedUserId = null;
+        setIsAdmin(false);
+      }
+      setLoading(false);
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          setTimeout(() => checkAdmin(session.user.id), 0);
-        } else {
-          setIsAdmin(false);
-        }
-        setLoading(false);
+      (_event, session) => {
+        // Bỏ qua INITIAL_SESSION nếu getSession() đã chạy trước
+        if (!initialized && _event === "INITIAL_SESSION") return;
+        handleSession(session);
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        checkAdmin(session.user.id);
-      }
-      setLoading(false);
+      initialized = true;
+      handleSession(session);
     });
 
     return () => subscription.unsubscribe();
