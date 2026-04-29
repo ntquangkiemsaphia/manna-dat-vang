@@ -2,8 +2,14 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SectionTitle from "@/components/SectionTitle";
-import { Calendar } from "lucide-react";
 import { stripHtml } from "@/lib/html";
+import { getOptimizedImageUrl } from "@/lib/image";
+
+const CalendarIcon = ({ className = "w-3 h-3" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+    <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+  </svg>
+);
 
 const NewsSection = () => {
   const { data: news = [] } = useQuery({
@@ -47,7 +53,7 @@ const NewsSection = () => {
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                 {featured.image_url ? (
-                  <img src={featured.image_url} alt={featured.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  <img src={getOptimizedImageUrl(featured.image_url, { width: 900, quality: 72 })} alt={featured.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 ) : (
                   <div className="absolute inset-0 gradient-primary opacity-80" />
                 )}
@@ -58,7 +64,7 @@ const NewsSection = () => {
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                  <Calendar className="w-3 h-3" /> {fmtDate(featured.created_at)}
+                  <CalendarIcon className="w-3 h-3" /> {fmtDate(featured.created_at)}
                 </div>
                 <h3 className="text-xl md:text-2xl font-serif font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors mb-2">
                   {featured.title}
@@ -80,7 +86,7 @@ const NewsSection = () => {
               >
                 <div className="relative w-32 sm:w-40 aspect-square flex-shrink-0 bg-muted overflow-hidden">
                   {item.image_url ? (
-                    <img src={item.image_url} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img src={getOptimizedImageUrl(item.image_url, { width: 360, quality: 70 })} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   ) : (
                     <div className="absolute inset-0 gradient-primary opacity-70" />
                   )}
@@ -91,7 +97,7 @@ const NewsSection = () => {
                     {item.title}
                   </h4>
                   <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" /> {fmtDate(item.created_at)}
+                    <CalendarIcon className="w-3 h-3" /> {fmtDate(item.created_at)}
                   </div>
                 </div>
               </Link>

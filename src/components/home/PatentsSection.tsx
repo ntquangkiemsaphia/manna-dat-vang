@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import SectionTitle from "@/components/SectionTitle";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { getOptimizedImageUrl } from "@/lib/image";
+
+const XIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
 
 const PatentsSection = () => {
   const { data: patents = [] } = useQuery({
@@ -37,7 +42,7 @@ const PatentsSection = () => {
               style={{ aspectRatio: "1 / 1.4142" }}
             >
               {p.image_url ? (
-                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                <img src={getOptimizedImageUrl(p.image_url, { width: 520, quality: 72 })} alt={p.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
               ) : (
                 <div className="w-full h-full bg-white/10 flex items-center justify-center text-white/50 text-sm p-4 text-center">{p.title}</div>
               )}
@@ -62,11 +67,11 @@ const PatentsSection = () => {
                 aria-label="Đóng"
                 className="absolute -top-2 -right-2 z-10 w-10 h-10 rounded-full bg-white text-foreground shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
               >
-                <X className="w-5 h-5" />
+                <XIcon className="w-5 h-5" />
               </button>
               {patents[zoomed].image_url ? (
                 <img
-                  src={patents[zoomed].image_url}
+                  src={getOptimizedImageUrl(patents[zoomed].image_url, { width: 1400, quality: 78 })}
                   alt={patents[zoomed].title}
                   className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl bg-white"
                 />
