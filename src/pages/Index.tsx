@@ -19,7 +19,7 @@ const DeferredHomeBelowFold = () => {
           observer.disconnect();
         }
       },
-      { rootMargin: "500px 0px" }
+      { rootMargin: "120px 0px" }
     );
     observer.observe(marker);
     return () => observer.disconnect();
