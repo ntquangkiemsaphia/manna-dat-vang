@@ -1,84 +1,123 @@
-## Tổng quan các vấn đề phát hiện
+## Kết quả review hiện tại
 
-Trang chủ vẫn còn trắng vài giây khi mở lần đầu (đặc biệt mobile/3G) và có warning console. Sau khi review, đây là các nguyên nhân chính:
+Tôi đã kiểm tra đúng theo thứ tự: HTML trả về trước, rồi asset JS/CSS, rồi browser network.
 
-### 1. Critical path còn nặng (block render)
-- `src/index.css` đang `@import` Google Fonts (Inter + Playfair, nhiều weight) **đồng bộ ngay đầu CSS** → CSS bị block đến khi font tải xong → trang trắng cho tới lúc đó. Đây là "thủ phạm" lớn nhất khiến mobile bị trắng lâu.
-- `src/main.tsx` import `./index.css` ngay → toàn bộ Tailwind + font import phải tải trước khi React mount.
-- `index.html` không preconnect tới Supabase / fonts.googleapis nên DNS+TLS chậm trên 4G.
+### 1. Domain Lovable publish đang trả HTML hợp lệ
+`https://manna-dat-vang.lovable.app/` trả về HTML mới, có fallback loading trong `#root`, có preload font, và bundle đã được tách nhỏ:
 
-### 2. Bundle ban đầu vẫn cõng nhiều thứ không cần cho trang chủ
-- `Header.tsx` (load ngay) import `@tanstack/react-query` và `Button` (kéo Radix Slot) — OK, nhưng `useQuery` cho header categories vẫn được tạo dù `enabled:false` (tốn ít, chấp nhận).
-- `HeroSection.tsx` cũng tạo `useQuery` ngay, gọi `import("@/integrations/supabase/client")` ngay khi mount → tải supabase-js trên critical path. Đáng ra Hero có thể render placeholder text mặc định trước, fetch sau khi idle.
-- `getOptimizedImageUrl` được dùng trong Hero — OK, nhưng ảnh hero db chưa được preload nên LCP chậm.
+```text
+/assets/index-CoLviRX_.js       ~41 KB
+/assets/query-DY7N8mpO.js       modulepreload
+/assets/react-vendor-BAMQe-ZL.js modulepreload
+/assets/index-dDC52mRQ.css
+```
 
-### 3. Lỗi console (không gây trắng nhưng nên dọn)
-- `SectionTitle` và inline `ArrowRight` trong `ProductsShowcase` / `ProductsBento` bị React cảnh báo "Function components cannot be given refs" do được dùng làm con trực tiếp của `<Link asChild>`/`Slot` ở đâu đó. Cần forwardRef hoặc bọc bằng `<span>`.
+Điều này cho thấy bản Lovable publish hiện tại không còn là HTML rỗng hoàn toàn.
 
-### 4. Manual chunks chưa tối ưu
-- `vite.config.ts` đang gom `react-vendor` + `supabase` + `query` + `tiptap`. Nhưng `@supabase/supabase-js` thực chất chỉ cần khi user tương tác → để Vite tự code-split theo dynamic import sẽ tốt hơn là ép vào 1 chunk eager.
+### 2. Domain `https://vuakiem.com/` đang trả HTML cũ
+HTML hiện tại từ `vuakiem.com` là bản cũ hơn:
 
-### 5. Layout shift / "blink" giữa fallback HTML và React
-- HTML có spinner xanh, nhưng khi React mount, `Index` render ngay `HeroSection` (background gradient sáng) → người dùng thấy chớp. Nên giữ một skeleton hero match bg.
+```html
+<div id="root"></div>
+<script type="module" crossorigin src="/assets/index-CCgAEa0q.js"></script>
+<link rel="stylesheet" crossorigin href="/assets/index-aMO2qmxh.css">
+```
 
----
+Các dấu hiệu bản cũ:
+- `#root` rỗng, không có fallback loading.
+- CSS vẫn còn `@import` Google Fonts blocking.
+- Chưa có `modulepreload` cho `react-vendor` và `query`.
+- Main JS vẫn là một file lớn khoảng `1,079,819 bytes`.
 
-## Kế hoạch thực hiện
+### 3. Nguyên nhân trực tiếp gây trắng trang trên `vuakiem.com`
+Browser report:
 
-### Bước 1 — Loại bỏ Google Fonts blocking (impact lớn nhất cho mobile)
-- Bỏ dòng `@import url('https://fonts.googleapis.com/...)` trong `src/index.css`.
-- Thêm vào `index.html` (trong `<head>`):
-  - `<link rel="preconnect" href="https://fonts.googleapis.com">`
-  - `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`
-  - `<link rel="preconnect" href="https://gkehvopdnlkdjfxqtygi.supabase.co">`
-  - `<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" onload="this.rel='stylesheet'">` + noscript fallback.
-  - Giảm weight: Inter 400/500/600/700, Playfair 600/700 (bỏ 300/800/400/500 không dùng) → giảm ~60% kích thước font.
-- Đảm bảo `font-display: swap` (đã có qua param), nên text hiện ngay với font hệ thống fallback.
+```text
+Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING
+https://vuakiem.com/assets/index-CCgAEa0q.js
+```
 
-### Bước 2 — Inline critical CSS cho hero/header
-- Trong `index.html`, mở rộng style của `#root` fallback để có cùng background-color `#f8faf7` với app (đã có), thêm `body { background:#f8faf7; margin:0; font-family: system-ui,-apple-system,sans-serif; }` để tránh flash khi React mount nhưng CSS Tailwind chưa parse xong (rất nhanh nhưng giúp cảm giác mượt).
+Tôi cũng kiểm tra bằng `curl`: server khai báo `Content-Length: 1079819` nhưng kết nối bị đóng khi mới tải được khoảng `130 KB` ở chế độ không nén, hoặc khoảng `419 KB` khi gzip. Vì JS chính tải không hoàn tất, trình duyệt không chạy React, nên `#root` vẫn rỗng và trang trắng.
 
-### Bước 3 — Trì hoãn Supabase trên critical path của Hero
-- `HeroSection.tsx`: render text mặc định + ảnh placeholder/gradient ngay lập tức. Đặt `useQuery` với `enabled` chỉ bật sau `requestIdleCallback` (hoặc `setTimeout 0`) → tách supabase-js khỏi initial render.
-- Khi data về, hoán đổi sang nội dung DB (đã có sẵn pattern). Loại bỏ skeleton `animate-pulse` che ảnh khi `waiting` để không che đè khi data đến trễ.
+Kết luận: lỗi trắng trang hiện tại trên domain thật **không phải do component React không render**, mà do **deploy/self-host server đang phục vụ asset JS bị cắt ngang**, cộng thêm domain đó đang chạy **build cũ**.
 
-### Bước 4 — Preload ảnh hero database (LCP)
-- Trong `Header`/`Layout`, sau khi có `image_url` đầu tiên từ DB cho hero, inject `<link rel="preload" as="image" href="...">` qua `useEffect` để browser bắt đầu tải sớm nhất có thể (hoặc dùng `fetchpriority="high"` trên thẻ `<img>` đầu tiên trong Hero).
+## Plan xử lý sau khi được duyệt
 
-### Bước 5 — Sửa warning forwardRef
-- `SectionTitle` → `forwardRef<HTMLDivElement, SectionTitleProps>`.
-- `ArrowRight` inline trong `ProductsShowcase` / `ProductsBento` → đổi thành `forwardRef` hoặc bỏ ra ngoài thành component có forwardRef. (Chỉ cần thiết nếu nó nằm trong `Slot`/`asChild`; kiểm tra & fix.)
+### Bước 1 — Sửa cấu hình self-host để không dùng `vite preview` làm production server
+Hiện `Dockerfile` đang chạy:
 
-### Bước 6 — Tinh chỉnh manualChunks
-- Bỏ `supabase` và `tiptap` khỏi `manualChunks` để Vite tự tách theo dynamic import (tránh kéo eager). Giữ lại `react-vendor`, `query`.
-- Thêm `build.target: 'es2020'`, `cssCodeSplit: true` (mặc định OK), bật `build.modulePreload.polyfill: false` để giảm vài KB.
+```text
+npm run preview
+```
 
-### Bước 7 — Giảm tải Header
-- Header hiện có `<img logo>` + 2 `useQuery` enabled-on-demand → OK. Chỉ thêm `width/height` cho `<img>` để tránh CLS, `loading="eager"` `fetchpriority="high"` cho logo.
+`vite preview` chỉ phù hợp để preview build, không nên dùng làm production server sau nginx reverse proxy, đặc biệt khi asset lớn/gzip/chunked dễ phát sinh lỗi truyền tải.
 
-### Bước 8 — Nén ảnh tĩnh nặng nhất
-- `src/assets/journey-bg.jpg` (446KB) và `hero-home.jpg` (194KB), `hero-products.jpg` (141KB): chạy lệnh nén bằng sharp/imagemagick để xuất WebP <120KB, giữ độ nét. Cập nhật import trong các component tương ứng.
+Tôi sẽ đổi Dockerfile sang production static server bằng nginx container:
 
-### Bước 9 — QA & đo lại
-- Build & dùng `browser--performance_profile` ở viewport mobile (390×844): kiểm tra TTFB, FCP, LCP, long tasks.
-- Mục tiêu: FCP < 1.5s trên 4G, không còn white screen > 500ms sau khi script bắt đầu chạy.
+```text
+Stage 1: node build app
+Stage 2: nginx serve /usr/share/nginx/html
+```
 
----
+### Bước 2 — Thêm nginx config chuẩn cho SPA + cache asset
+Tạo config nginx trong repo để container phục vụ file build trực tiếp:
 
-## Section kỹ thuật (chi tiết file thay đổi)
+- Route SPA fallback:
+  - `/` và deep link như `/san-pham/...` trả `index.html`.
+- Asset cache đúng:
+  - `/assets/*` cache dài hạn, immutable.
+  - `index.html` no-cache để cập nhật deploy nhanh.
+- Tắt nguy cơ chunked/proxy sai từ `vite preview`, vì nginx sẽ đọc file tĩnh trực tiếp và trả `Content-Length` ổn định.
 
-| File | Thay đổi |
+### Bước 3 — Giảm thêm rủi ro bundle quá lớn trên self-host
+Mặc dù bản mới trên Lovable đã split còn nhỏ, self-host vẫn đang chạy build cũ. Tôi sẽ rà lại để đảm bảo:
+
+- `vite.config.ts` vẫn giữ manual chunks hiện tại: `react-vendor`, `query`.
+- Supabase/Tiptap không bị kéo vào chunk đầu.
+- Các route nặng như admin/catalog/products/news vẫn lazy-load.
+- Nếu cần, tách thêm `ui-vendor`/`radix` để main JS không phình to trở lại.
+
+### Bước 4 — Fix các warning còn lại nhưng không trộn với nguyên nhân trắng trang
+Console hiện còn warning `Function components cannot be given refs`, chủ yếu từ `PatentsSection`/`DialogContent`. Warning này không làm trắng trang, nhưng sẽ được dọn sau phần deploy:
+
+- Sửa `DialogPortal` nếu đang bị Radix truyền ref vào function component không forwardRef.
+- Rà `PatentsSection` để không đưa function component trực tiếp vào vị trí cần ref.
+
+### Bước 5 — Sau khi sửa, cần deploy lại self-host và kiểm tra HTML/JS trước khi xem UI
+Sau khi apply code, workflow deploy hiện có sẽ build Docker image và `docker compose up -d --force-recreate` trên server. Vì tôi không có quyền SSH trực tiếp từ đây để chạy deploy production, bước xác nhận sau deploy sẽ là:
+
+1. Trigger deploy qua push/workflow hiện tại hoặc người quản trị server chạy lại deploy.
+2. Kiểm tra HTML:
+
+```text
+curl -I https://vuakiem.com/
+curl https://vuakiem.com/ | grep '/assets/index-'
+```
+
+3. Kiểm tra JS tải đủ:
+
+```text
+curl -I https://vuakiem.com/assets/<file>.js
+curl -sS https://vuakiem.com/assets/<file>.js -o /tmp/app.js
+```
+
+Kỳ vọng:
+- Không còn `ERR_INCOMPLETE_CHUNKED_ENCODING`.
+- JS tải đủ theo `Content-Length`.
+- HTML có fallback loading hoặc build mới.
+- Browser hiển thị trang chủ ngay, không còn trắng.
+
+## File dự kiến chỉnh
+
+| File | Mục đích |
 |---|---|
-| `src/index.css` | Bỏ `@import` Google Fonts |
-| `index.html` | Preconnect + preload font (async pattern), inline body bg |
-| `src/components/home/HeroSection.tsx` | Defer query bằng `requestIdleCallback`, bỏ skeleton overlay che ảnh, thêm `fetchpriority="high"` |
-| `src/components/SectionTitle.tsx` | Bọc bằng `forwardRef` |
-| `src/components/home/ProductsShowcase.tsx` | `ArrowRight` thành component forwardRef hoặc inline span |
-| `src/components/home/ProductsBento.tsx` | Tương tự ProductsShowcase |
-| `vite.config.ts` | Gọn `manualChunks` (chỉ react-vendor + query) |
-| `src/components/Header.tsx` | Thêm width/height + fetchpriority cho logo |
-| `src/assets/*.jpg` | Nén & convert sang webp những ảnh > 100KB |
+| `Dockerfile` | Chuyển từ `vite preview` sang nginx static production server |
+| `nginx.conf` hoặc `docker/nginx.conf` | SPA fallback, cache asset, headers đúng |
+| `.github/workflows/deploy.yml` | Nếu cần, đảm bảo build không cache sai và container recreate sạch |
+| `vite.config.ts` | Chỉ tinh chỉnh thêm nếu bundle self-host vẫn gom thành 1 file lớn |
+| `src/components/ui/dialog.tsx` | Dọn warning ref còn lại |
+| `src/components/home/PatentsSection.tsx` | Dọn warning ref liên quan dialog/patent modal nếu cần |
 
-Không cần thay đổi DB, RLS, edge functions hay dependencies (đã có sẵn mọi thứ cần thiết).
+## Lưu ý quan trọng
 
-Sau khi bạn duyệt plan, tôi sẽ chuyển sang chế độ build và thực hiện theo thứ tự trên, ưu tiên Bước 1 (font) vì đó là nguyên nhân chính gây màn trắng trên mobile.
+Bản tại `vuakiem.com` hiện đang không trùng với bản Lovable publish. Vì vậy sau khi sửa code trong repo, cần deploy lại domain `vuakiem.com`; nếu server vẫn phục vụ image cũ thì lỗi trắng trang sẽ còn dù code trong Lovable đã đúng.
