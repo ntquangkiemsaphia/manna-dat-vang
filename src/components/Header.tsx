@@ -91,7 +91,17 @@ const Header = () => {
       {/* Main nav */}
       <div className="container flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Manna Đất Vàng" className="h-12 w-auto max-w-[64px] object-contain" />
+          <img
+            src={logo}
+            alt="Manna Đất Vàng"
+            width={64}
+            height={48}
+            loading="eager"
+            // @ts-ignore - fetchpriority valid HTML attr
+            fetchpriority="high"
+            decoding="async"
+            className="h-12 w-auto max-w-[64px] object-contain"
+          />
           <div className="hidden sm:block">
             <p className="font-serif text-lg font-bold text-primary leading-tight">MANNA ĐẤT VÀNG</p>
             <p className="text-xs text-muted-foreground">Nông nghiệp sinh học bền vững</p>

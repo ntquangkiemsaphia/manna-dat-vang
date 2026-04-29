@@ -15,7 +15,17 @@ type HeroData = {
 };
 
 const HeroSection = () => {
-  const { data, isLoading, isFetched } = useQuery({
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    const idle = (window as any).requestIdleCallback || ((cb: () => void) => window.setTimeout(cb, 200));
+    const handle = idle(() => setEnabled(true));
+    return () => {
+      const cancel = (window as any).cancelIdleCallback || window.clearTimeout;
+      cancel(handle);
+    };
+  }, []);
+
+  const { data } = useQuery({
     queryKey: ["page_sections", "home", "hero"],
     queryFn: async () => {
       const { supabase } = await import("@/integrations/supabase/client");
@@ -27,6 +37,7 @@ const HeroSection = () => {
         .maybeSingle();
       return (data || null) as HeroData | null;
     },
+    enabled,
   });
   const images = useMemo(() => {
     const raw = data?.image_url?.trim();
@@ -36,7 +47,6 @@ const HeroSection = () => {
       .map((s) => s.trim())
       .filter(Boolean);
   }, [data?.image_url]);
-  const waiting = isLoading && !isFetched;
 
   const [active, setActive] = useState(0);
 
@@ -101,9 +111,6 @@ const HeroSection = () => {
           <div className="relative order-first lg:order-last animate-fade-in">
             <div className="absolute inset-0 gradient-primary rounded-3xl rotate-3 opacity-20" />
             <div className="relative rounded-3xl overflow-hidden shadow-card-hover aspect-[4/5] lg:aspect-[5/6] bg-muted">
-              {waiting && (
-                <div className="absolute inset-0 bg-muted animate-pulse" />
-              )}
               {images.map((src, idx) => (
                 <img
                   key={`${src}-${idx}`}
@@ -111,6 +118,8 @@ const HeroSection = () => {
                   alt={`${title} ${idx + 1}`}
                   loading={idx === 0 ? "eager" : "lazy"}
                   decoding="async"
+                  // @ts-ignore - fetchpriority valid HTML attr
+                  fetchpriority={idx === 0 ? "high" : "auto"}
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
                     idx === active ? "opacity-100" : "opacity-0"
                   }`}
