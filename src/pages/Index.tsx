@@ -1,26 +1,35 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Layout from "@/components/Layout";
-import SectionTitle from "@/components/SectionTitle";
 import HeroSection from "@/components/home/HeroSection";
 import StatsSection from "@/components/home/StatsSection";
-import JourneySection from "@/components/home/JourneySection";
-import ProductsShowcase from "@/components/home/ProductsShowcase";
-import ProductsBento from "@/components/home/ProductsBento";
-import NewsSection from "@/components/home/NewsSection";
-import PatentsSection from "@/components/home/PatentsSection";
-import PartnersSection from "@/components/home/PartnersSection";
+
+const HomeBelowFold = lazy(() => import("@/components/home/HomeBelowFold"));
+
+const DeferredHomeBelowFold = () => {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const schedule = window.requestIdleCallback || ((cb: IdleRequestCallback) => window.setTimeout(cb, 900));
+    const id = schedule(() => setReady(true));
+    return () => {
+      if (typeof id === "number") window.clearTimeout(id);
+      else window.cancelIdleCallback?.(id);
+    };
+  }, []);
+
+  if (!ready) return null;
+  return (
+    <Suspense fallback={<div className="min-h-[30vh] bg-background" />}>
+      <HomeBelowFold />
+    </Suspense>
+  );
+};
 
 const Index = () => (
   <Layout>
     <HeroSection />
     <StatsSection />
-    <JourneySection />
-    <ProductsShowcase />
-    <ProductsBento />
-    <NewsSection />
-    <PatentsSection />
-    <PartnersSection />
+    <DeferredHomeBelowFold />
   </Layout>
 );
 
