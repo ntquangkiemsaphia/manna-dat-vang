@@ -43,12 +43,8 @@ const DeferredAppToasters = () => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const schedule = window.requestIdleCallback || ((cb: IdleRequestCallback) => window.setTimeout(cb, 1200));
-    const id = schedule(() => setReady(true));
-    return () => {
-      if (typeof id === "number") window.clearTimeout(id);
-      else window.cancelIdleCallback?.(id);
-    };
+    const id = window.setTimeout(() => setReady(true), 1200);
+    return () => window.clearTimeout(id);
   }, []);
 
   if (!ready) return null;
