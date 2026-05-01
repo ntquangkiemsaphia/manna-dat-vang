@@ -45,39 +45,103 @@ const AdminPage = () => {
             <Button variant="outline" onClick={signOut}><LogOut className="w-4 h-4 mr-1" /> Đăng xuất</Button>
           </div>
 
-          <Tabs defaultValue="products">
-            <TabsList className="mb-6 flex-wrap h-auto">
-              <TabsTrigger value="products">Sản phẩm</TabsTrigger>
-              <TabsTrigger value="product-categories">DM Sản phẩm</TabsTrigger>
-              <TabsTrigger value="news">Bài viết</TabsTrigger>
-              <TabsTrigger value="categories">DM Bài viết</TabsTrigger>
-              <TabsTrigger value="patents">Sáng chế</TabsTrigger>
-              <TabsTrigger value="partners">Đối tác</TabsTrigger>
-              <TabsTrigger value="pages">Ảnh & Section</TabsTrigger>
-              <TabsTrigger value="page-content">Nội dung trang</TabsTrigger>
-              <TabsTrigger value="journey">Hành trình</TabsTrigger>
-              <TabsTrigger value="core-values">Giá trị cốt lõi</TabsTrigger>
-              <TabsTrigger value="vision-mission">Tầm nhìn & Sứ mệnh</TabsTrigger>
-              <TabsTrigger value="catalog">Catalog</TabsTrigger>
-              <TabsTrigger value="users">Người dùng</TabsTrigger>
-            </TabsList>
-            <TabsContent value="products"><ProductsAdmin /></TabsContent>
-            <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
-            <TabsContent value="news"><NewsAdmin /></TabsContent>
-            <TabsContent value="categories"><CategoriesAdmin /></TabsContent>
-            <TabsContent value="patents"><PatentsAdmin /></TabsContent>
-            <TabsContent value="partners"><PartnersAdmin /></TabsContent>
-            <TabsContent value="pages"><PageSectionsAdmin /></TabsContent>
-            <TabsContent value="page-content"><PageContentAdmin /></TabsContent>
-            <TabsContent value="journey"><JourneyAdmin /></TabsContent>
-            <TabsContent value="core-values"><CoreValuesAdmin /></TabsContent>
-            <TabsContent value="vision-mission"><VisionMissionAdmin /></TabsContent>
-            <TabsContent value="catalog"><CatalogAdmin /></TabsContent>
-            <TabsContent value="users"><UsersAdmin /></TabsContent>
-          </Tabs>
+          <AdminTabs />
         </div>
       </section>
     </Layout>
+  );
+};
+
+// ==================== Grouped Tabs ====================
+const ADMIN_GROUPS = [
+  {
+    key: "posts",
+    label: "Bài viết",
+    items: [
+      { value: "news", label: "Bài viết" },
+      { value: "categories", label: "Danh mục bài viết" },
+    ],
+  },
+  {
+    key: "products",
+    label: "Sản phẩm",
+    items: [
+      { value: "products", label: "Sản phẩm" },
+      { value: "product-categories", label: "Danh mục sản phẩm" },
+      { value: "catalog", label: "Catalog" },
+      { value: "patents", label: "Sáng chế" },
+    ],
+  },
+  {
+    key: "pages",
+    label: "Nội dung trang",
+    items: [
+      { value: "pages", label: "Ảnh & Section" },
+      { value: "page-content", label: "Nội dung trang" },
+      { value: "journey", label: "Hành trình" },
+      { value: "core-values", label: "Giá trị cốt lõi" },
+      { value: "vision-mission", label: "Tầm nhìn & Sứ mệnh" },
+      { value: "partners", label: "Đối tác" },
+    ],
+  },
+  {
+    key: "users",
+    label: "User",
+    items: [{ value: "users", label: "Người dùng" }],
+  },
+] as const;
+
+const AdminTabs = () => {
+  const [group, setGroup] = useState<string>(ADMIN_GROUPS[0].key);
+  const currentGroup = ADMIN_GROUPS.find((g) => g.key === group) ?? ADMIN_GROUPS[0];
+  const [tab, setTab] = useState<string>(currentGroup.items[0].value);
+
+  const handleGroupChange = (key: string) => {
+    setGroup(key);
+    const g = ADMIN_GROUPS.find((x) => x.key === key);
+    if (g) setTab(g.items[0].value);
+  };
+
+  return (
+    <div>
+      {/* Nhóm chính */}
+      <Tabs value={group} onValueChange={handleGroupChange} className="mb-4">
+        <TabsList className="flex-wrap h-auto bg-muted/60">
+          {ADMIN_GROUPS.map((g) => (
+            <TabsTrigger key={g.key} value={g.key} className="text-base font-medium px-5 py-2">
+              {g.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+
+      {/* Tab con */}
+      <Tabs value={tab} onValueChange={setTab}>
+        {currentGroup.items.length > 1 && (
+          <TabsList className="mb-6 flex-wrap h-auto">
+            {currentGroup.items.map((it) => (
+              <TabsTrigger key={it.value} value={it.value}>
+                {it.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        )}
+
+        <TabsContent value="products"><ProductsAdmin /></TabsContent>
+        <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
+        <TabsContent value="news"><NewsAdmin /></TabsContent>
+        <TabsContent value="categories"><CategoriesAdmin /></TabsContent>
+        <TabsContent value="patents"><PatentsAdmin /></TabsContent>
+        <TabsContent value="partners"><PartnersAdmin /></TabsContent>
+        <TabsContent value="pages"><PageSectionsAdmin /></TabsContent>
+        <TabsContent value="page-content"><PageContentAdmin /></TabsContent>
+        <TabsContent value="journey"><JourneyAdmin /></TabsContent>
+        <TabsContent value="core-values"><CoreValuesAdmin /></TabsContent>
+        <TabsContent value="vision-mission"><VisionMissionAdmin /></TabsContent>
+        <TabsContent value="catalog"><CatalogAdmin /></TabsContent>
+        <TabsContent value="users"><UsersAdmin /></TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
