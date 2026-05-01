@@ -101,11 +101,11 @@ const Footer = () => (
     <div className="border-t border-white/10">
       <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/40">
         <p>© 2025 Công ty Cổ phần Manna Đất Vàng. All rights reserved.</p>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Link to="/dang-nhap" className="hover:text-secondary transition-colors">
             Đăng nhập quản trị
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   </footer>
