@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      core_values: {
+        Row: {
+          created_at: string
+          icon_name: string
+          id: string
+          image_url: string | null
+          is_highlight: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          is_highlight?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          is_highlight?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       journey_milestones: {
         Row: {
           created_at: string
@@ -284,6 +317,45 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vision_mission: {
+        Row: {
+          created_at: string
+          description: string
+          eyebrow: string
+          icon_name: string
+          id: string
+          image_url: string | null
+          section_key: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          eyebrow?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          section_key: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          eyebrow?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          section_key?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
