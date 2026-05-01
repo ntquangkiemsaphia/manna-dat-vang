@@ -30,7 +30,7 @@ const PartnersSection = () => {
                 <img
                   src={getOptimizedImageUrl(p.logo_url, { width: 320, quality: 75 })}
                   alt={p.name}
-                  className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                  className="h-16 w-auto object-contain"
                   loading="lazy"
                 />
               ) : (
