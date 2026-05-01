@@ -20,6 +20,8 @@ import PageSectionsAdmin from "@/components/admin/PageSectionsAdmin";
 import PageContentAdmin from "@/components/admin/PageContentAdmin";
 import JourneyAdmin from "@/components/admin/JourneyAdmin";
 import CatalogAdmin from "@/components/admin/CatalogAdmin";
+import CoreValuesAdmin from "@/components/admin/CoreValuesAdmin";
+import VisionMissionAdmin from "@/components/admin/VisionMissionAdmin";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 import ImageUpload from "@/components/admin/ImageUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -53,6 +55,8 @@ const AdminPage = () => {
               <TabsTrigger value="pages">Ảnh & Section</TabsTrigger>
               <TabsTrigger value="page-content">Nội dung trang</TabsTrigger>
               <TabsTrigger value="journey">Hành trình</TabsTrigger>
+              <TabsTrigger value="core-values">Giá trị cốt lõi</TabsTrigger>
+              <TabsTrigger value="vision-mission">Tầm nhìn & Sứ mệnh</TabsTrigger>
               <TabsTrigger value="catalog">Catalog</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
@@ -64,6 +68,8 @@ const AdminPage = () => {
             <TabsContent value="pages"><PageSectionsAdmin /></TabsContent>
             <TabsContent value="page-content"><PageContentAdmin /></TabsContent>
             <TabsContent value="journey"><JourneyAdmin /></TabsContent>
+            <TabsContent value="core-values"><CoreValuesAdmin /></TabsContent>
+            <TabsContent value="vision-mission"><VisionMissionAdmin /></TabsContent>
             <TabsContent value="catalog"><CatalogAdmin /></TabsContent>
           </Tabs>
         </div>
