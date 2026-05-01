@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +12,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn, isAdmin, user } = useAuth();
+  const { signIn, isAdmin, user, loading: authLoading } = useAuth();
 
-  // Redirect if already logged in as admin
-  if (user && isAdmin) {
-    navigate("/quan-tri", { replace: true });
+  // Redirect if already logged in as admin (không setState trong render)
+  if (!authLoading && user && isAdmin) {
+    return <Navigate to="/quan-tri" replace />;
   }
 
   const handleLogin = async (e: React.FormEvent) => {
