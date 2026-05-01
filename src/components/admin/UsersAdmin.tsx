@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Pencil, KeyRound } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 type Role = "admin" | "manager" | "user";
@@ -23,6 +23,8 @@ const UsersAdmin = () => {
   const qc = useQueryClient();
   const { user: me } = useAuth();
   const [open, setOpen] = useState(false);
+  const [editEmailUser, setEditEmailUser] = useState<UserRow | null>(null);
+  const [editPwdUser, setEditPwdUser] = useState<UserRow | null>(null);
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -91,6 +93,18 @@ const UsersAdmin = () => {
                 </td>
                 <td className="p-3 text-right">
                   <Button
+                    size="sm" variant="ghost" title="Đổi email"
+                    onClick={() => setEditEmailUser(u)}
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm" variant="ghost" title="Đổi mật khẩu"
+                    onClick={() => setEditPwdUser(u)}
+                  >
+                    <KeyRound className="w-4 h-4" />
+                  </Button>
+                  <Button
                     size="sm" variant="ghost" className="text-destructive"
                     disabled={u.id === me?.id}
                     onClick={() => { if (confirm(`Xoá user ${u.email}?`)) deleteUser.mutate(u.id); }}
@@ -106,6 +120,24 @@ const UsersAdmin = () => {
           </tbody>
         </table>
       </div>
+
+      <Dialog open={!!editEmailUser} onOpenChange={(o) => !o && setEditEmailUser(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Đổi email đăng nhập</DialogTitle></DialogHeader>
+          {editEmailUser && (
+            <EditEmailForm user={editEmailUser} onDone={() => { setEditEmailUser(null); qc.invalidateQueries({ queryKey: ["admin-users"] }); }} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editPwdUser} onOpenChange={(o) => !o && setEditPwdUser(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Đổi mật khẩu</DialogTitle></DialogHeader>
+          {editPwdUser && (
+            <EditPasswordForm user={editPwdUser} onDone={() => setEditPwdUser(null)} />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -140,6 +172,47 @@ const CreateUserForm = ({ onDone }: { onDone: () => void }) => {
       </div>
       <Button type="submit" className="w-full gradient-primary text-primary-foreground border-0" disabled={m.isPending}>
         {m.isPending ? "Đang tạo..." : "Tạo người dùng"}
+      </Button>
+    </form>
+  );
+};
+
+const EditEmailForm = ({ user, onDone }: { user: UserRow; onDone: () => void }) => {
+  const [email, setEmail] = useState(user.email);
+  const m = useMutation({
+    mutationFn: async () => callFn({ action: "update_email", user_id: user.id, email }),
+    onSuccess: () => { toast.success("Đã đổi email"); onDone(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); m.mutate(); }} className="space-y-4">
+      <div>
+        <label className="text-sm font-medium mb-1 block">Email mới *</label>
+        <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+      </div>
+      <Button type="submit" className="w-full gradient-primary text-primary-foreground border-0" disabled={m.isPending}>
+        {m.isPending ? "Đang lưu..." : "Cập nhật email"}
+      </Button>
+    </form>
+  );
+};
+
+const EditPasswordForm = ({ user, onDone }: { user: UserRow; onDone: () => void }) => {
+  const [password, setPassword] = useState("");
+  const m = useMutation({
+    mutationFn: async () => callFn({ action: "update_password", user_id: user.id, password }),
+    onSuccess: () => { toast.success("Đã đổi mật khẩu"); onDone(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); m.mutate(); }} className="space-y-4">
+      <div className="text-sm text-muted-foreground">User: <span className="font-medium text-foreground">{user.email}</span></div>
+      <div>
+        <label className="text-sm font-medium mb-1 block">Mật khẩu mới * (≥ 6 ký tự)</label>
+        <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+      </div>
+      <Button type="submit" className="w-full gradient-primary text-primary-foreground border-0" disabled={m.isPending}>
+        {m.isPending ? "Đang lưu..." : "Cập nhật mật khẩu"}
       </Button>
     </form>
   );
