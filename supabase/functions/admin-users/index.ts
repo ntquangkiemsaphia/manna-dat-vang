@@ -10,6 +10,8 @@ type Action =
   | { action: "list" }
   | { action: "create"; email: string; password: string; role: "admin" | "manager" | "user" }
   | { action: "update_role"; user_id: string; role: "admin" | "manager" | "user" }
+  | { action: "update_email"; user_id: string; email: string }
+  | { action: "update_password"; user_id: string; password: string }
   | { action: "delete"; user_id: string };
 
 Deno.serve(async (req) => {
@@ -77,6 +79,22 @@ Deno.serve(async (req) => {
         return json({ error: "Không thể tự hạ quyền admin của chính mình" }, 400);
       await admin.from("user_roles").delete().eq("user_id", user_id);
       const { error } = await admin.from("user_roles").insert({ user_id, role });
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    if (body.action === "update_email") {
+      const { user_id, email } = body;
+      if (!email || !/^\S+@\S+\.\S+$/.test(email)) return json({ error: "Email không hợp lệ" }, 400);
+      const { error } = await admin.auth.admin.updateUserById(user_id, { email, email_confirm: true });
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    if (body.action === "update_password") {
+      const { user_id, password } = body;
+      if (!password || password.length < 6) return json({ error: "Mật khẩu tối thiểu 6 ký tự" }, 400);
+      const { error } = await admin.auth.admin.updateUserById(user_id, { password });
       if (error) throw error;
       return json({ ok: true });
     }
