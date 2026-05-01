@@ -22,6 +22,7 @@ import JourneyAdmin from "@/components/admin/JourneyAdmin";
 import CatalogAdmin from "@/components/admin/CatalogAdmin";
 import CoreValuesAdmin from "@/components/admin/CoreValuesAdmin";
 import VisionMissionAdmin from "@/components/admin/VisionMissionAdmin";
+import UsersAdmin from "@/components/admin/UsersAdmin";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 import ImageUpload from "@/components/admin/ImageUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -58,6 +59,7 @@ const AdminPage = () => {
               <TabsTrigger value="core-values">Giá trị cốt lõi</TabsTrigger>
               <TabsTrigger value="vision-mission">Tầm nhìn & Sứ mệnh</TabsTrigger>
               <TabsTrigger value="catalog">Catalog</TabsTrigger>
+              <TabsTrigger value="users">Người dùng</TabsTrigger>
             </TabsList>
             <TabsContent value="products"><ProductsAdmin /></TabsContent>
             <TabsContent value="product-categories"><ProductCategoriesAdmin /></TabsContent>
@@ -71,6 +73,7 @@ const AdminPage = () => {
             <TabsContent value="core-values"><CoreValuesAdmin /></TabsContent>
             <TabsContent value="vision-mission"><VisionMissionAdmin /></TabsContent>
             <TabsContent value="catalog"><CatalogAdmin /></TabsContent>
+            <TabsContent value="users"><UsersAdmin /></TabsContent>
           </Tabs>
         </div>
       </section>
