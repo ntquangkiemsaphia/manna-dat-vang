@@ -40,7 +40,7 @@ const CoreValuesAdmin = () => {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">
-          Quản lý các ô "Giá trị cốt lõi" hiển thị trên trang chủ. Có thể dùng icon hoặc ảnh tròn.
+          Quản lý các ô "Giá trị cốt lõi" hiển thị trên trang chủ. Có thể dùng icon hoặc ảnh chữ nhật (tỉ lệ 2:1 — rộng gấp đôi cao).
         </p>
         <Button
           size="sm"
@@ -99,19 +99,19 @@ const ValueCard = ({ item }: { item: any }) => {
 
   return (
     <div className="bg-card rounded-xl shadow-card p-5 border border-border">
-      <div className="flex items-center gap-4 mb-4">
+      <div className="mb-4">
         <div
-          className={`w-16 h-16 rounded-full flex items-center justify-center overflow-hidden shrink-0 ${
+          className={`w-full aspect-[2/1] rounded-xl flex items-center justify-center overflow-hidden mb-3 ${
             form.is_highlight ? "gradient-primary text-primary-foreground" : "bg-accent text-primary"
           }`}
         >
           {form.image_url ? (
             <img src={form.image_url} alt="" className="w-full h-full object-cover" />
           ) : (
-            <LucideIcon name={form.icon_name} className="w-8 h-8" strokeWidth={1.5} />
+            <LucideIcon name={form.icon_name} className="w-12 h-12" strokeWidth={1.5} />
           )}
         </div>
-        <div className="flex-1">
+        <div>
           <label className="text-xs text-muted-foreground">Tiêu đề</label>
           <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         </div>
@@ -146,7 +146,7 @@ const ValueCard = ({ item }: { item: any }) => {
       </div>
 
       <div className="mb-3">
-        <label className="text-xs text-muted-foreground mb-1 block">Ảnh tròn (tuỳ chọn — sẽ ưu tiên hơn icon)</label>
+        <label className="text-xs text-muted-foreground mb-1 block">Ảnh chữ nhật 2:1 (tuỳ chọn — sẽ ưu tiên hơn icon)</label>
         <ImageUpload value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} folder="core-values" />
       </div>
 
