@@ -19,8 +19,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [roleChecked, setRoleChecked] = useState(false);
+  // Không chặn render mặc định để tránh "trang trắng" trong vài giây đầu
+  // khi Supabase đang khôi phục session / refresh token thất bại.
+  const [loading, setLoading] = useState(false);
+  const [roleChecked, setRoleChecked] = useState(true);
 
   const checkAdmin = async (userId: string) => {
     try {
@@ -68,6 +70,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       initialized = true;
       handleSession(session);
+    }).catch(() => {
+      initialized = true;
+      setLoading(false);
+      setRoleChecked(true);
     });
 
     return () => subscription.unsubscribe();
