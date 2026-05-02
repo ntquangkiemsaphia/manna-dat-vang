@@ -19,9 +19,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  // Không chặn render mặc định để tránh "trang trắng" trong vài giây đầu
-  // khi Supabase đang khôi phục session / refresh token thất bại.
-  const [loading, setLoading] = useState(false);
+  // Chỉ các trang cần auth dùng loading để chờ khôi phục session,
+  // tránh redirect nhầm từ /quan-tri về /dang-nhap rồi nháy ngược lại.
+  const [loading, setLoading] = useState(true);
   const [roleChecked, setRoleChecked] = useState(true);
 
   const checkAdmin = async (userId: string) => {
