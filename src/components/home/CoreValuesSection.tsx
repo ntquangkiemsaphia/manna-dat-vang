@@ -26,7 +26,7 @@ const CoreValuesSection = () => {
           {values.map((v: any) => (
             <div key={v.id} className="flex flex-col items-center text-center">
               <div
-                className={`relative w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center shadow-card overflow-hidden transition-transform hover:-translate-y-1 ${
+                className={`relative w-full aspect-[2/1] rounded-xl flex items-center justify-center shadow-card overflow-hidden transition-transform hover:-translate-y-1 ${
                   v.is_highlight
                     ? "gradient-primary text-primary-foreground"
                     : "bg-accent text-primary"
@@ -34,7 +34,7 @@ const CoreValuesSection = () => {
               >
                 {v.image_url ? (
                   <img
-                    src={getOptimizedImageUrl(v.image_url, { width: 240, quality: 75 })}
+                    src={getOptimizedImageUrl(v.image_url, { width: 480, quality: 75 })}
                     alt={v.title}
                     loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover"
