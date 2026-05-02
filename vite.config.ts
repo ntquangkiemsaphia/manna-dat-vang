@@ -25,9 +25,24 @@ export default defineConfig(({ mode }) => ({
     modulePreload: { polyfill: false },
     rollupOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "query": ["@tanstack/react-query"],
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          // Gom toàn bộ react / react-dom (gồm react-dom/client) / react-router vào 1 chunk
+          if (
+            id.includes("/react-dom/") ||
+            id.includes("/react/") ||
+            id.includes("/react-router/") ||
+            id.includes("/react-router-dom/") ||
+            id.includes("/scheduler/")
+          ) {
+            return "react-vendor";
+          }
+          if (
+            id.includes("@tanstack/react-query") ||
+            id.includes("@tanstack/query-core")
+          ) {
+            return "query";
+          }
         },
       },
     },

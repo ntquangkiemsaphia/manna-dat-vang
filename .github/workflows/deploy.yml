@@ -42,4 +42,7 @@ jobs:
             docker load -i vite-app.tar
 
             docker compose down
+            # Dọn image / container cũ để loại bỏ asset stale (vd: client-*.js bị cắt)
+            docker container prune -f || true
+            docker image prune -f || true
             docker compose up -d --force-recreate
