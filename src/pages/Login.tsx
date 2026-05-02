@@ -12,10 +12,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn, isAdmin, user, loading: authLoading } = useAuth();
+  const { signIn, isAdmin, user } = useAuth();
 
-  // Redirect if already logged in as admin (không setState trong render)
-  if (!authLoading && user && isAdmin) {
+  // Redirect nếu đã đăng nhập admin. Khi chưa biết, vẫn render form
+  // để tránh hiện "trang trắng" trong vài giây đầu.
+  if (user && isAdmin) {
     return <Navigate to="/quan-tri" replace />;
   }
 
