@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Index from "./pages/Index";
 
 // Lazy-load các route ít dùng / nặng để giảm bundle ban đầu
@@ -54,18 +54,10 @@ const DeferredAppToasters = () => {
   );
 };
 
-const AdminRoute = () => (
+const AdminAuthRoutes = () => (
   <Suspense fallback={<PageFallback />}>
     <AuthBoundary>
-      <Admin />
-    </AuthBoundary>
-  </Suspense>
-);
-
-const LoginRoute = () => (
-  <Suspense fallback={<PageFallback />}>
-    <AuthBoundary>
-      <Login />
+      <Outlet />
     </AuthBoundary>
   </Suspense>
 );
@@ -85,8 +77,10 @@ const App = () => (
           <Route path="/tin-tuc" element={<News />} />
           <Route path="/tin-tuc/:id" element={<NewsDetail />} />
           <Route path="/lien-he" element={<Contact />} />
-          <Route path="/dang-nhap" element={<LoginRoute />} />
-          <Route path="/quan-tri" element={<AdminRoute />} />
+          <Route element={<AdminAuthRoutes />}>
+            <Route path="/dang-nhap" element={<Login />} />
+            <Route path="/quan-tri" element={<Admin />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
